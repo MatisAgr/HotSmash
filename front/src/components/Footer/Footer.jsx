@@ -6,7 +6,7 @@ import { NAME_APP } from "../../constants/NameApp";
 
 export default function FooterComponent() {
   return (
-    <Footer container className="bg-gray-800 text-white rounded-none">
+    <Footer container className="bg-black text-white rounded-none">
       <div className="w-full">
         <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">
           <div>
