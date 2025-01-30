@@ -22,7 +22,7 @@ export default function Navbar() {
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white text-lg font-bold">
           <NavLink to="/" className="flex items-center text-white">
-            <img src={LOGO} alt="Logo" className="w-10 h-10 mr-2" />
+            {/* <img src={LOGO} alt="Logo" className="w-10 h-10 mr-2" /> */}
             {NAME_APP}
           </NavLink>
         </div>
