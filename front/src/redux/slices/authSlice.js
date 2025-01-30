@@ -47,6 +47,7 @@ export const profileUser = createAsyncThunk(
   }
 );
 
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {

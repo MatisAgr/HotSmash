@@ -13,9 +13,9 @@ export const createLike = createAsyncThunk(
 );
 
 export const getLikesByUserId = createAsyncThunk(
-    'like/getLikesByUserId', async (userId, { rejectWithValue }) => {
+    'like/getLikesByUserId', async (credentials, { rejectWithValue }) => {
         try {
-            const response = await MyAxios.get(`/like/user/${userId}`);
+            const response = await MyAxios.get(`/like/user`, credentials);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -24,9 +24,9 @@ export const getLikesByUserId = createAsyncThunk(
 );
 
 export const getSmashLikesByUserId = createAsyncThunk(
-    'like/getSmashLikesByUserId', async (userId, { rejectWithValue }) => {
+    'like/getSmashLikesByUserId', async (credentials, { rejectWithValue }) => {
         try {
-            const response = await MyAxios.get(`/like/user/smash/${userId}`);
+            const response = await MyAxios.get(`/like/user/smash`, credentials);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -46,16 +46,15 @@ export const deleteLike = createAsyncThunk(
 );
 
 export const deleteLikeUser = createAsyncThunk(
-    'like/deleteLikeUser', async (userId, { rejectWithValue }) => {
+    'like/deleteLikeUser', async (credentials, { rejectWithValue }) => {
         try {
-            await MyAxios.delete(`/like/user/${userId}`);
+            await MyAxios.delete(`/like/user/`, credentials);
             return userId;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
     }
 );
-
 
 const smashSlice = createSlice({
     name: 'smash',
