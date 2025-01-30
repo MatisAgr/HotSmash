@@ -30,10 +30,10 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               <NavLink
-                to="/createSmasher"
+                to="/createSmash"
                 className={({ isActive }) =>
                         isActive
-                          ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                          ? "text-white  px-5 py-5 flex items-center"
                           : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
                       }
                     >
@@ -44,7 +44,7 @@ export default function Navbar() {
               to="/connectedUsers"
               className={({ isActive }) =>
                       isActive
-                        ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                        ? "text-white  px-5 py-5 flex items-center"
                         : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
                     }
                   >
@@ -55,7 +55,7 @@ export default function Navbar() {
               to="/profile"
               className={({ isActive }) =>
                 isActive
-                  ? "bg-gray-700 text-white px-3 py-3 flex items-center"
+                  ? "text-white px-3 py-3 flex items-center"
                   : "text-gray-300 hover:bg-gray-700 px-3 py-3 flex items-center"
               }
             >

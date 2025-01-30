@@ -9,12 +9,12 @@ import FooterComponent from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import CreateSmashPage from "./pages/CreateSmashPage/CreateSmashPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useSelector } from "react-redux";
 
-import FloatingButton from './components/FloatingButton/FloatingButton';
 import CreatePostModal from './components/CreatePostModal/CreatePostModal';
 
 function App() {
@@ -36,11 +36,12 @@ function App() {
       </header>
 
       {/* Content routes */}
-      <div className="mx-auto pt-16 bg-gray-700 min-h-screen w-full">
+      <div className="mx-auto pt-16 bg-black min-h-screen w-full">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/createSmash" element={<CreateSmashPage />} />
 
           <Route 
             path="/" 
@@ -57,7 +58,6 @@ function App() {
 
       {/* <FooterComponent /> */}
 
-      {isAuthenticated && <FloatingButton onClick={openModal} />}
       <CreatePostModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
