@@ -1,4 +1,3 @@
-// filepath: /c:/Users/matis/Desktop/Ceci est un dossier SSD/IPSSI/BigData-IA/S5_REACT_NATIVE/TP_Groupe/front/src/components/Form/LoginForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/slices/authSlice';

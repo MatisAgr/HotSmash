@@ -8,6 +8,7 @@ const likeRoutes = require('./routes/likeRoute');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
+const Like = require('./models/Like');
 
 dotenv.config();
 
@@ -24,8 +25,11 @@ let onlineUsers = new Map();
 
 const broadcastOnlineUsers = async () => {
     try {
-        const users = await User.find({ _id: { $in: Array.from(onlineUsers.values()) } }).select('username');
-        const userList = users.map(user => ({ id: user._id, username: user.username }));
+        const users = await User.find({ _id: { $in: Array.from(onlineUsers.values()) } }).select('username point');
+        const userList = await Promise.all(users.map(async user => {
+            const smashesToDo = await Like.countDocuments({ userId: user._id, type: 2 });
+            return { id: user._id, username: user.username, points: user.point, smashesToDo };
+        }));
         const message = JSON.stringify({ type: 'onlineUsers', users: userList });
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {

@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import ConnectedUserCard from '../../components/Card/ConnectedUserCard';
 import SearchBar from '../../components/SearchBar/SearchBar';
 
 export default function ConnectedUsers() {
   const [searchTerm, setSearchTerm] = useState('');
-
-  const users = [
-    { id: 1, username: 'JohnDoe', points: 200, smashesToDo: 5 },
-    { id: 2, username: 'JaneDoe', points: 300, smashesToDo: 3 },
-    { id: 3, username: 'FooBar', points: 100, smashesToDo: 2 },
-    { id: 4, username: 'BazQux', points: 500, smashesToDo: 1 },
-  ];
+  const users = useSelector((state) => state.onlineUsers.users);
 
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
