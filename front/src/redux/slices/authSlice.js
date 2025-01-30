@@ -6,7 +6,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await MyAxios.post('/api/user/login', credentials);
+      const response = await MyAxios.post('user/login', credentials);
       const { token, user } = response.data;
 
       Cookies.set('authToken', token, { secure: true, sameSite: 'Strict' });
@@ -23,7 +23,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       console.log('Données d\'inscription envoyées:', userData);
-      const response = await MyAxios.post('/api/user/register', userData);
+      const response = await MyAxios.post('user/register', userData);
       return response.data;
     } catch (error) {
       if (error.response && error.response.data) {
@@ -39,7 +39,7 @@ export const profileUser = createAsyncThunk(
   'auth/profileUser',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await MyAxios.get('/api/user/profile');
+      const response = await MyAxios.get('user/profile');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Erreur inconnue');

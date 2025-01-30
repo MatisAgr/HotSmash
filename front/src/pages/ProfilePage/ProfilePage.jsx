@@ -1,127 +1,169 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { profileUser } from '../../redux/slices/authSlice';
-// import { Modal, Button, Label, TextInput, Textarea, Select } from 'flowbite-react';
+import React, { useEffect, useState, useRef } from 'react';
+import SmashCard from '../../components/Card/SmashCard';
+import ConfirmationModal from '../../components/Modal/ConfirmationModal';
+import * as echarts from 'echarts';
 
 const ProfilePage = () => {
-  const dispatch = useDispatch();
-  const { user, isLoading, error } = useSelector((state) => state.auth);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const smashesPerPage = 4;
+  const chartRef = useRef(null);
+
+  // Données statiques pour l'utilisateur
+  const user = {
+    username: 'JohnDoe',
+    email: 'john.doe@example.com',
+  };
+
+  // Données statiques pour les smashes
+  const [smashes, setSmashes] = useState([
+      { id: 1, name: 'Smash 1', age: 25, gender: 'Homme', points: 200, date: '2023-10-01', url_img: 'x' },
+      { id: 2, name: 'Smash 2', age: 30, gender: 'Femme', points: 300, date: '2023-10-02', url_img: 'x' },
+      { id: 3, name: 'Smash 3', age: 22, gender: 'Autre', points: -350, date: '2023-10-03', url_img: 'x' },
+      { id: 4, name: 'Smash 4', age: 28, gender: 'Homme', points: 400, date: '2023-10-04', url_img: 'x' },
+      { id: 5, name: 'Smash 5', age: 27, gender: 'Femme', points: 560, date: '2023-10-05', url_img: 'x' },
+      { id: 6, name: 'Smash 6', age: 24, gender: 'Autre', points: 789, date: '2023-10-06', url_img: 'x' },
+      { id: 7, name: 'Smash 7', age: 26, gender: 'Homme', points: -150, date: '2023-10-01', url_img: 'x' },
+      { id: 8, name: 'Smash 8', age: 29, gender: 'Femme', points: 250, date: '2023-10-02', url_img: 'x' },
+      { id: 9, name: 'Smash 9', age: 23, gender: 'Autre', points: -100, date: '2023-10-03', url_img: 'x' },
+      { id: 10, name: 'Smash 10', age: 31, gender: 'Homme', points: 500, date: '2023-10-04', url_img: 'x' },
+      { id: 11, name: 'Smash 11', age: 28, gender: 'Femme', points: -200, date: '2023-10-05', url_img: 'x' },
+      { id: 12, name: 'Smash 12', age: 25, gender: 'Autre', points: 300, date: '2023-10-06', url_img: 'x' },
+  ]);
+  const totalPoints = smashes.reduce((total, smash) => total + smash.points, 0);
 
   useEffect(() => {
-    dispatch(profileUser());
-  }, [dispatch]);
+    if (smashes.length > 0) {
+      const chart = echarts.init(chartRef.current);
+      const option = {
+        title: {
+          text: 'Points de détraquage mental par date',
+        },
+        tooltip: {
+          trigger: 'axis',
+        },
+        xAxis: {
+          type: 'category',
+          data: smashes.map((smash) => smash.date),
+        },
+        yAxis: {
+          type: 'value',
+          min: 0,
+        },
+        series: [
+          {
+            name: 'Points de détraquage mental',
+            type: 'line',
+            data: smashes.map((smash) => smash.points),
+          },
+        ],
+      };
+      chart.setOption(option);
+    }
+  }, [smashes]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const indexOfLastSmash = currentPage * smashesPerPage;
+  const indexOfFirstSmash = indexOfLastSmash - smashesPerPage;
+  const currentSmashes = smashes.slice(indexOfFirstSmash, indexOfLastSmash);
 
-  if (error) {
-    return <div className="container mx-auto p-4"><div className="bg-white shadow-md rounded p-4"><h1 className="text-3xl font-bold text-center text-red-500">{error}</h1></div></div>;
-  }
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+
+  const handleReset = () => {
+    setSmashes([]);
+    setCurrentPage(1);
+  };
+
+  const handleIncreasePoints = (id) => {
+    setSmashes((prevSmashes) =>
+      prevSmashes.map((smash) =>
+        smash.id === id ? { ...smash, points: smash.points + 1 } : smash
+      )
+    );
+  };
+
+  const handleDecreasePoints = (id) => {
+    setSmashes((prevSmashes) =>
+      prevSmashes.map((smash) =>
+        smash.id === id ? { ...smash, points: Math.max(smash.points - 1, 0) } : smash
+      )
+    );
+  };
 
   return (
-  <div className="container mx-auto p-4">
-        <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
-        {user && (
-          <div className="bg-white shadow-md rounded p-4">
-            {/* {editMode ? ( */}
-              <form 
-              // onSubmit={handleSubmit}
-              >
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    id="username"
-                    // value={formData.username}
-                    // onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    // value={formData.email}
-                    // onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    // value={formData.password}
-                    // onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    // value={formData.confirmPassword}
-                    // onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    // onClick={() => setEditMode(false)}
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            {/* ) : ( */}
-              <>
-                <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                {/* <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p> */}
-                <button
-                  // onClick={() => setEditMode(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-                >
-                  Edit Profile
-                </button>
-                <button
-                  // onClick={handleDeleteAccount}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mx-5 rounded focus:outline-none focus:shadow-outline mt-4"
-                >
-                  Delete Account
-                </button>
-              </>
-            {/* )} */}
-          </div>
-        )}
-  
+    <div className="container mx-auto p-4">
+      <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
+      {user && (
+        <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
+          <p className="text-3xl font-bold">Username: {user.username}</p>
+          <p className="text-2xl"><strong>Email:</strong> {user.email}</p>
+        </div>
+      )}
+      <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
+        <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
+        <p className="text-6xl font-bold text-purple-800">{totalPoints}</p>
       </div>
-    );
+      <div className="bg-white shadow-md rounded p-4 mb-6">
+        <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
+        <div ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
+      </div>
+      <div className="bg-white shadow-md rounded p-4">
+        <h2 className="text-2xl font-bold mb-4">Liste des Smashes</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {currentSmashes.map((smash) => (
+            <SmashCard
+              key={smash.id}
+              name={smash.name}
+              age={smash.age}
+              gender={smash.gender}
+              url_img={smash.url_img}
+              points={smash.points}
+              size='small'
+              onIncrease={() => handleIncreasePoints(smash.id)}
+              onDecrease={() => handleDecreasePoints(smash.id)}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNextPage}
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={indexOfLastSmash >= smashes.length}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      <div className="flex justify-center mt-6">
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg focus:outline-none focus:shadow-outline text-3xl"
+          onClick={() => setIsModalOpen(true)}
+        >
+          Reset les stats
+        </button>
+      </div>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={() => {
+          handleReset();
+          setIsModalOpen(false);
+        }}
+      />
+    </div>
+  );
 };
 
 export default ProfilePage;
