@@ -32,7 +32,7 @@ const ProfilePage = () => {
       const chart = echarts.init(chartRef.current);
       const option = {
         title: {
-          text: 'Points de Démence par Date',
+          text: 'Points de détraquage mental par date',
         },
         tooltip: {
           trigger: 'axis',
@@ -47,7 +47,7 @@ const ProfilePage = () => {
         },
         series: [
           {
-            name: 'Points de Démence',
+            name: 'Points de détraquage mental',
             type: 'line',
             data: smashes.map((smash) => smash.points),
           },
@@ -84,7 +84,7 @@ const ProfilePage = () => {
         </div>
       )}
       <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
-        <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de Démence</h2>
+        <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
         <p className="text-6xl font-bold text-purple-800">{totalPoints}</p>
       </div>
       <div className="bg-white shadow-md rounded p-4 mb-6">
