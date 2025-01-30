@@ -1,1 +1,1 @@
-export const NAME_APP = "H🔥TSM💘SH";
+export const NAME_APP = "H🔥T - SM💘SH";
