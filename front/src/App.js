@@ -55,7 +55,7 @@ function App() {
         </Routes>
       </div>
 
-      <FooterComponent />
+      {/* <FooterComponent /> */}
 
       {isAuthenticated && <FloatingButton onClick={openModal} />}
       <CreatePostModal isOpen={isModalOpen} onClose={closeModal} />
