@@ -10,7 +10,7 @@ const CreateSmashForm = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
-    const [otherSex, setOtherSex] = useState('');
+    const [customSex, setCustomSex] = useState(''); // État pour le genre personnalisé
     const [points, setPoints] = useState('');
     const [urlImg, setUrlImg] = useState('');
     const [formError, setFormError] = useState('');
@@ -22,7 +22,7 @@ const CreateSmashForm = () => {
             setName('');
             setAge('');
             setSex('');
-            setOtherSex('');
+            setCustomSex(''); // Réinitialiser le genre personnalisé
             setPoints('');
             setUrlImg('');
         }
@@ -45,7 +45,7 @@ const CreateSmashForm = () => {
             setSuccessMessage('');
             return;
         }
-        if (sex === 'other' && !otherSex) {
+        if (sex === 'Autre' && !customSex) {
             setFormError('Please specify your gender');
             setSuccessMessage('');
             return;
@@ -70,7 +70,7 @@ const CreateSmashForm = () => {
         const matchData = {
             name,
             age,
-            gender: sex === 'other' ? otherSex : sex,
+            gender: sex === 'Autre' ? customSex : sex,
             point: points,
             url_img: urlImg,
         };
@@ -90,7 +90,7 @@ const CreateSmashForm = () => {
                 <div className="absolute w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
                 <div className="absolute w-72 h-72 bg-red-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
             </div>
-            <form className="relative p-10 bg-black bg-opacity-80 rounded-lg shadow-lg w-full md:w-1/2 z-10" onSubmit={handleSubmit}>
+            <form className="relative p-10 bg-black bg-opacity-80 rounded-3xl shadow-lg overflow-y-auto z-10" onSubmit={handleSubmit}>
                 <h2 className="text-2xl font-bold mb-6 text-white">Créer un Smash</h2>
                 <label className="block text-lg mb-2 text-white">Nom:</label>
                 <input
@@ -120,13 +120,13 @@ const CreateSmashForm = () => {
                     <option value="Autre">Autre</option>
                 </select>
 
-                {sex === 'other' && (
+                {sex === 'Autre' && (
                     <input
                         className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
                         type="text"
                         placeholder="Objet, Animal, Autre..."
-                        value={otherSex}
-                        onChange={(e) => setOtherSex(e.target.value)}
+                        value={customSex}
+                        onChange={(e) => setCustomSex(e.target.value)}
                     />
                 )}
 
@@ -172,7 +172,7 @@ const CreateSmashForm = () => {
                 <SmashCard
                     name={name || 'Nom'}
                     age={age || 'Âge'}
-                    gender={sex === 'other' ? otherSex : sex || 'Genre'}
+                    gender={sex === 'Autre' ? customSex : sex || 'Genre'}
                     url_img={urlImg || 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1200px-No-Image-Placeholder.svg.png'}
                 />
             </div>
