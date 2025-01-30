@@ -15,3 +15,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* retirer la scroll bar */
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* retirer la scroll bar */
+
+
