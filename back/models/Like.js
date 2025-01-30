@@ -1,15 +1,19 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const likeSchema = new Schema({
+const likeSchema = new mongoose.Schema({
     userId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
     matchId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Match',
+        required: true
+    },
+    type: {
+        type: Number,
+        enum: [1, 2, 3],
         required: true
     }
 }, {

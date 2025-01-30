@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoute');
 const matchRoutes = require('./routes/matchRoute');
+const likeRoutes = require('./routes/likeRoute');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
@@ -68,6 +69,7 @@ const startServers = () => {
 
     app.use('/api/match', matchRoutes);
     app.use('/api/user', userRoutes);
+    app.use('/api/like', likeRoutes);
 
     const PORT = process.env.PORT || 5060;
     app.listen(PORT, () => console.log(`Serveur Express démarré sur le port ${PORT}`));

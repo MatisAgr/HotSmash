@@ -1,11 +1,13 @@
 const Like = require('../models/Like');
 const jwt = require('jsonwebtoken');
+require ('dotenv').config();
+
 
 
 exports.getLikesByUserId = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'your_jwt_secret_key'); // Replace 'your_jwt_secret_key' with your actual secret key
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET );
         const userId = decodedToken.id;
 
         const likes = await Like.find({ userId: userId });
@@ -15,6 +17,19 @@ exports.getLikesByUserId = async (req, res) => {
     }
 };
 
+exports.deleteLikeUser = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
+        await Like.deleteMany({ userId: userId });
+
+        res.status(200).json({ message: 'All likes deleted for this user' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 exports.getLikesByMatchId = async (req, res) => {
     try {
         const likes = await Like.find({ matchId: req.params.matchId });
@@ -27,12 +42,13 @@ exports.getLikesByMatchId = async (req, res) => {
 exports.createLike = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'your_jwt_secret_key'); // Replace 'your_jwt_secret_key' with your actual secret key
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decodedToken.id;
 
         const like = new Like({
             userId: userId,
             matchId: req.body.matchId,
+            tyoe: req.body.type
         });
 
         const newLike = await like.save();
@@ -45,7 +61,7 @@ exports.createLike = async (req, res) => {
 exports.deleteLike = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, 'your_jwt_secret_key'); // Replace 'your_jwt_secret_key' with your actual secret key
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decodedToken.id;
 
         const like = await Like.findById(req.params.id);
