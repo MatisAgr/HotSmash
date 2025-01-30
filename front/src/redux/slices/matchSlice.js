@@ -1,20 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import MyAxios from '../../utils/interceptor';
 
-export const fetchArticles = createAsyncThunk(
-  'articles/fetchArticles',
-  async ({ page, limit }, { rejectWithValue }) => {
+export const getAllPosts = createAsyncThunk(
+  'matchs/getAllMatchs',
+  async ({ limit }, { rejectWithValue }) => {
     try {
-      const response = await MyAxios.get(`/api/articles?page=${page}&limit=${limit}`);
+      const url = `/match/?limit=${limit}`;
+      console.log('Dispatch getAllPosts avec limit:', limit);
+      const response = await MyAxios.get(url);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Erreur inconnue');
+      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
     }
   }
 );
 
-const articlesSlice = createSlice({
-  name: 'articles',
+
+const matchsSlice = createSlice({
+  name: 'match',
   initialState: {
     items: [],
     page: 1,
@@ -23,7 +26,7 @@ const articlesSlice = createSlice({
     error: null,
   },
   reducers: {
-    resetArticles: (state) => {
+    resetMatch: (state) => {
       state.items = [];
       state.page = 1;
       state.hasMore = true;
@@ -31,22 +34,22 @@ const articlesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchArticles.pending, (state) => {
+      .addCase(getAllPosts.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchArticles.fulfilled, (state, action) => {
+      .addCase(getAllPosts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.items = [...state.items, ...action.payload.articles];
         state.page += 1;
         state.hasMore = action.payload.hasMore;
       })
-      .addCase(fetchArticles.rejected, (state, action) => {
+      .addCase(getAllPosts.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { resetArticles } = articlesSlice.actions;
-export default articlesSlice.reducer;
+export const { resetArticles } = matchsSlice.actions;
+export default matchsSlice.reducer;
