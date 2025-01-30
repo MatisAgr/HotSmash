@@ -79,7 +79,7 @@ const CreateSmashForm = () => {
     };
 
     return (
-        <div className="relative flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+        <div className="relative flex flex-col md:flex-row items-center justify-center min-h-screen">
             {isLoading && (
                 <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
                     <div className="text-white text-2xl">Chargement...</div>
