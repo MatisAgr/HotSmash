@@ -15,7 +15,6 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useSelector } from "react-redux";
 
-import CreatePostModal from './components/CreatePostModal/CreatePostModal';
 
 function App() {
   const isAuthenticated = useSelector((state) => !!state.auth.token);
@@ -58,7 +57,6 @@ function App() {
 
       {/* <FooterComponent /> */}
 
-      <CreatePostModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }
