@@ -1,1 +1,1 @@
-export const NAME_APP = "Yitter";
+export const NAME_APP = "H💘TSM🔥SH";

@@ -18,7 +18,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-black">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white text-lg font-bold">
           <NavLink to="/" className="flex items-center text-white">
@@ -26,23 +26,49 @@ export default function Navbar() {
             {NAME_APP}
           </NavLink>
         </div>
-        <div className="space-x-4 flex items-center">
+        <div className="flex items-center">
           {isAuthenticated ? (
             <>
               <NavLink
-                to="/profile"
+                to="/createSmasher"
                 className={({ isActive }) =>
-                  isActive
-                    ? "bg-gray-700 text-white rounded px-3 py-2 flex items-center"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white rounded px-3 py-2 flex items-center"
-                }
-              >
+                        isActive
+                          ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                      }
+                    >
                 <FaUser className="mr-1" />
-                Profile
+                Créer Smasher
               </NavLink>
+              <NavLink
+              to="/connectedUsers"
+              className={({ isActive }) =>
+                      isActive
+                        ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                    }
+                  >
+                <FaUser className="mr-1" />
+                Utilisateurs
+              </NavLink> 
+              <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-700 text-white px-3 py-3 flex items-center"
+                  : "text-gray-300 hover:bg-gray-700 px-3 py-3 flex items-center"
+              }
+            >
+              <img
+                src="https://www.francetvinfo.fr/pictures/KI83JKIWxYVA8ng-cUtYxM6l-z8/1200x1200/2016/08/23/shrek-5.jpg"
+                alt="Profile"
+                className="rounded-full"
+                style={{ width: '40px', height: '40px' }}
+              />
+            </NavLink>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 text-white rounded px-3 py-2 flex items-center"
+                className="bg-red-500 text-white  px-5 py-5 flex items-center"
               >
                 <FaSignOutAlt className="mr-1" />
                 Logout
@@ -54,8 +80,8 @@ export default function Navbar() {
                 to="/login"
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-gray-700 text-white rounded px-3 py-2 flex items-center"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white rounded px-3 py-2 flex items-center"
+                    ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
                 }
               >
                 <FaSignInAlt className="mr-1" />
@@ -65,8 +91,8 @@ export default function Navbar() {
                 to="/register"
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-gray-700 text-white rounded px-3 py-2 flex items-center"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white rounded px-3 py-2 flex items-center"
+                    ? "bg-gray-700 text-white  px-5 py-5 flex items-center"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
                 }
               >
                 <FaUserPlus className="mr-1" />
