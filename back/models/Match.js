@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const MatchSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     age: { type: String, required: true, unique: true },
-    sex: { type: String, required: true },
+    sex: { type: String, required: true, enum: ['female', 'male', 'other', 'attack helicopter'] },
     point: { type: Number, required: true },
+    url_img: { type: String, require: true},
     createdAt: { type: Date, default: Date.now }
 });
 
