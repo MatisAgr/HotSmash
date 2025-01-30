@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 
 router.post('/', auth.authHeader, controllerMatch.createMatchProfile);
 router.get('/all', auth.authHeader, controllerMatch.getAllMatches);
+router.get('/allRandom', auth.authHeader, controllerMatch.getRandomMatches);
 router.get('/:id', auth.authHeader, controllerMatch.getMatchProfile);
 router.put('/:id', auth.isAdmin, controllerMatch.updateMatchProfile);
 router.delete('/:id', auth.isAdmin, controllerMatch.deleteMatchProfile);
