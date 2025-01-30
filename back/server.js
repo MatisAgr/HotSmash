@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoute');
-const matchRoutes = require('./routes/matchRoute')
+const matchRoutes = require('./routes/matchRoute');
 const WebSocket = require('ws');
-const jwt = require('jsonwebtoken'); // Ajout
-const User = require('./models/User'); // Ajout
+const jwt = require('jsonwebtoken');
+const User = require('./models/User');
 
 dotenv.config();
 
@@ -21,7 +21,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
 
 let onlineUsers = new Map();
 
-// Fonction pour diffuser la liste des utilisateurs en ligne
 const broadcastOnlineUsers = async () => {
     try {
         const users = await User.find({ _id: { $in: Array.from(onlineUsers.values()) } }).select('username');
@@ -37,9 +36,7 @@ const broadcastOnlineUsers = async () => {
     }
 };
 
-// Fonction pour démarrer les serveurs après la connexion à MongoDB
 const startServers = () => {
-    // Gestion des connexions WebSocket
     wss.on('connection', (ws) => {
         console.log('Client connecté');
 
@@ -69,7 +66,6 @@ const startServers = () => {
         });
     });
 
-    
     app.use('/api/match', matchRoutes);
     app.use('/api/user', userRoutes);
 
@@ -77,7 +73,6 @@ const startServers = () => {
     app.listen(PORT, () => console.log(`Serveur Express démarré sur le port ${PORT}`));
 };
 
-// Connexion à MongoDB avec gestion des événements
 const connectWithRetry = () => {
     mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
@@ -91,7 +86,6 @@ const connectWithRetry = () => {
     });
 };
 
-// Écouter les événements de MongoDB
 mongoose.connection.on('connected', () => {
     console.log('Mongoose connecté à la base de données');
 });
@@ -104,5 +98,4 @@ mongoose.connection.on('disconnected', () => {
     console.log('Mongoose déconnecté');
 });
 
-// Initialiser la connexion
 connectWithRetry();
