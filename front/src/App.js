@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
+import { useSelector } from "react-redux";
+
 import Navbar from "./components/Navbar/Navbar";
 import FooterComponent from "./components/Footer/Footer";
 
@@ -12,8 +14,9 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import CreateSmashPage from "./pages/CreateSmashPage/CreateSmashPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsers";
+
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import { useSelector } from "react-redux";
 
 
 function App() {
@@ -41,6 +44,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/createSmash" element={<CreateSmashPage />} />
+          <Route path="/connectedUsers" element={<ConnectedUsersPage />} />
 
           <Route 
             path="/" 
