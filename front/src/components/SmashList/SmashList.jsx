@@ -90,24 +90,54 @@ export default function SmashList() {
             <div className="flex items-center justify-between w-full relative z-5">
                 {/* Zone PASS à gauche */}
                 <motion.div
-                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-r from-red-900 via-red-700 to-red-500 flex items-center justify-center cursor-pointer p-4"
+                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-r from-red-900 via-red-700 to-red-500 flex items-center justify-center cursor-pointer p-4 relative"
                     onClick={() => handleAction('pass')}
                     onMouseMove={(e) => handleMouseMove(e, 'pass')}
                     onMouseLeave={handleMouseLeave}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <span className="text-white text-6xl font-extrabold drop-shadow-lg">PASS</span>
+                    <AnimatePresence>
+                        {direction === 'pass' && (
+                            <motion.span
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute text-white text-9xl font-extrabold drop-shadow-lg"
+                            >
+                                PASS !
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                    <span className="text-white text-6xl font-extrabold drop-shadow-lg">
+                        {direction === 'pass' ? '' : 'PASS'}
+                    </span>
                 </motion.div>
 
                 {/* Zone SMASH à droite */}
                 <motion.div
-                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-l from-lime-600 via-lime-500 to-lime-200 flex items-center justify-center cursor-pointer p-4"
+                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-l from-lime-600 via-lime-500 to-lime-200 flex items-center justify-center cursor-pointer p-4 relative"
                     onClick={() => handleAction('smash')}
                     onMouseMove={(e) => handleMouseMove(e, 'smash')}
                     onMouseLeave={handleMouseLeave}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <span className="text-white text-6xl font-extrabold drop-shadow-lg">SMASH</span>
+                    <AnimatePresence>
+                        {direction === 'smash' && (
+                            <motion.span
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.5 }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute text-white text-9xl font-extrabold drop-shadow-lg"
+                            >
+                                SMASH !
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                    <span className="text-white text-6xl font-extrabold drop-shadow-lg">
+                        {direction === 'smash' ? '' : 'SMASH'}
+                    </span>
                 </motion.div>
             </div>
 

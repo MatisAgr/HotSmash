@@ -8,7 +8,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await MyAxios.post('/auth/login', credentials);
+      const response = await MyAxios.post('/user/login', credentials);
       const { token, user } = response.data;
 
       // Stocker le token dans un cookie sécurisé
@@ -27,7 +27,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       console.log('Données d\'inscription envoyées:', userData); // Log des données
-      const response = await MyAxios.post('/auth/register', userData);
+      const response = await MyAxios.post('/user/register', userData);
       return response.data;
     } catch (error) {
       // Vérifier si le backend renvoie des erreurs de validation
@@ -44,7 +44,7 @@ export const profileUser = createAsyncThunk(
   'auth/profileUser',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await MyAxios.get('/auth/profile');
+      const response = await MyAxios.get('/user/profile');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Erreur inconnue');

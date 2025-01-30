@@ -15,7 +15,6 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { useSelector } from "react-redux";
 
-import FloatingButton from './components/FloatingButton/FloatingButton';
 import CreatePostModal from './components/CreatePostModal/CreatePostModal';
 
 function App() {
@@ -59,7 +58,6 @@ function App() {
 
       {/* <FooterComponent /> */}
 
-      {isAuthenticated && <FloatingButton onClick={openModal} />}
       <CreatePostModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
