@@ -3,15 +3,19 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import SmashCard from '../Card/SmashCard';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getRandomMatches } from '../../redux/slices/matchSlice';
+import { getRandomMatches, passMatch, smashMatch } from '../../redux/slices/matchSlice';
+import { updateUserPoints } from '../../redux/slices/authSlice';
 
 export default function SmashList() {
     const dispatch = useDispatch();
     const { items: users, isLoading, error } = useSelector((state) => state.match);
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
-        dispatch(getRandomMatches());
-    }, [dispatch]);
+        if (user) {
+          dispatch(getRandomMatches());
+        }
+      }, [dispatch, user]);
 
     const [direction, setDirection] = useState(null);
 
@@ -22,15 +26,25 @@ export default function SmashList() {
     // Tilt transformation
     const rotate = useTransform([rotateX, rotateY], ([latestX, latestY]) => latestY / 10 + latestX / 10);
 
-    const handleAction = (action) => {
+    const handleAction = async (action) => {
         setDirection(action);
-        setTimeout(() => {
-            dispatch({ type: 'match/removeFirstUser' });
-            setDirection(null);
-            // Reset rotation after action
-            rotateX.set(0);
-            rotateY.set(0);
-        }, 500);
+        if (users.length > 0 && user) {
+            const matchId = users[0]._id;
+            if (action === 'pass') {
+                dispatch(passMatch({ userId: user.id, matchId }));
+            } else if (action === 'smash') {
+                dispatch(smashMatch({ userId: user.id, matchId }));
+            }
+            dispatch(updateUserPoints(user.id));
+            // Retirer la carte actuelle après l'action
+            setTimeout(() => {
+                dispatch(getRandomMatches());
+                setDirection(null);
+                // Reset rotation after action
+                rotateX.set(0);
+                rotateY.set(0);
+            }, 500);
+        }
     };
 
     const handleMouseMove = (event, action) => {
@@ -135,7 +149,7 @@ export default function SmashList() {
                 <AnimatePresence>
                     {users.length > 0 && (
                         <motion.div
-                            key={users[0].id}
+                            key={users[0]._id}
                             initial={{ scale: 0.7, opacity: 0 }}
                             animate={{ scale: 0.85, opacity: 1 }}
                             exit={{

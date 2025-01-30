@@ -16,26 +16,20 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsers";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import { initiateWebSocket } from './redux/slices/onlineUsersSlice'; // Ajout
+import { initiateWebSocket } from './redux/slices/onlineUsersSlice';
+import { profileUser } from './redux/slices/authSlice';
 
 function App() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => !!state.auth.token);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
+      dispatch(profileUser());
       dispatch(initiateWebSocket());
     }
   }, [isAuthenticated, dispatch]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   return (
     <div className="">

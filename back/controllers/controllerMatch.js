@@ -79,3 +79,41 @@ exports.getMatchesByUserId = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+exports.passMatch = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
+        const like = new Like({
+            userId: userId,
+            matchId: req.body.matchId,
+            type: 1 // Type 1 for pass
+        });
+
+        const newLike = await like.save();
+        res.status(201).json(newLike);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+exports.smashMatch = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
+        const like = new Like({
+            userId: userId,
+            matchId: req.body.matchId,
+            type: 2 // Type 2 for smash
+        });
+
+        const newLike = await like.save();
+        res.status(201).json(newLike);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};

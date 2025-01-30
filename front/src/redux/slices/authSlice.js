@@ -11,6 +11,8 @@ export const loginUser = createAsyncThunk(
 
       Cookies.set('authToken', token, { secure: true, sameSite: 'Strict' });
 
+      console.log('Utilisateur connecté:', user);
+
       return { user, token };
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Erreur inconnue');
@@ -40,6 +42,9 @@ export const profileUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await MyAxios.get('user/profile');
+
+      console.log('Profil utilisateur récupéré:', response.data);
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Erreur inconnue');
@@ -47,6 +52,20 @@ export const profileUser = createAsyncThunk(
   }
 );
 
+export const updateUserPoints = createAsyncThunk(
+  'auth/updateUserPoints',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await MyAxios.get(`/user/${userId}`);
+
+      console.log('Points utilisateur mis à jour:', response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Erreur inconnue');
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -82,19 +101,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      .addCase(registerUser.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-        state.registerSuccess = false;
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.registerSuccess = true;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      })
       .addCase(profileUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -104,6 +110,18 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(profileUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateUserPoints.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUserPoints.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserPoints.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
