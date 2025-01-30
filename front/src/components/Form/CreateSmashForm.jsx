@@ -1,46 +1,60 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createMatch } from '../../redux/slices/matchSlice';
 
 const CreateSmashForm = () => {
+    const dispatch = useDispatch();
+    const { isLoading, error } = useSelector((state) => state.match);
+
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
     const [otherSex, setOtherSex] = useState('');
     const [points, setPoints] = useState('');
     const [urlImg, setUrlImg] = useState('');
-    const [error, setError] = useState('');
+    const [formError, setFormError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name) {
-            setError('Name is required');
+            setFormError('Name is required');
             return;
         }
         if (!age) {
-            setError('Age is required');
+            setFormError('Age is required');
             return;
         }
         if (!sex) {
-            setError('Gender is required');
+            setFormError('Gender is required');
             return;
         }
         if (sex === 'other' && !otherSex) {
-            setError('Please specify your gender');
+            setFormError('Please specify your gender');
             return;
         }
         if (!points) {
-            setError('Points are required');
+            setFormError('Points are required');
             return;
         }
         if (points < 0 || points > 1000) {
-            setError('Points must be between 0 and 1000');
+            setFormError('Points must be between 0 and 1000');
             return;
         }
         if (!urlImg) {
-            setError('Image URL is required');
+            setFormError('Image URL is required');
             return;
         }
-        setError('');
-        console.log({ name, age, sex: sex === 'other' ? otherSex : sex, points, urlImg });
+        setFormError('');
+
+        const matchData = {
+            name,
+            age,
+            gender: sex === 'other' ? otherSex : sex,
+            point: points,
+            url_img: urlImg,
+        };
+
+        dispatch(createMatch(matchData));
     };
 
     return (
@@ -99,13 +113,19 @@ const CreateSmashForm = () => {
                 onChange={(e) => setUrlImg(e.target.value)}
             />
 
-            <button className="bg-blue-500 text-white py-2 px-4 rounded" type="submit">
-                Create Smash
+            <button className="bg-blue-500 text-white py-2 px-4 rounded" type="submit" disabled={isLoading}>
+                {isLoading ? 'Creating...' : 'Create Smash'}
             </button>
+
+            {formError && (
+                <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
+                    {formError}
+                </div>
+            )}
 
             {error && (
                 <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
-                    {error}
+                    {error.message}
                 </div>
             )}
         </form>
