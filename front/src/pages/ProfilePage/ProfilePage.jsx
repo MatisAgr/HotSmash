@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const smashesPerPage = 5;
+  const smashesPerPage = 4;
   const chartRef = useRef(null);
 
   // Données statiques pour l'utilisateur
@@ -17,14 +17,19 @@ const ProfilePage = () => {
 
   // Données statiques pour les smashes
   const [smashes, setSmashes] = useState([
-    { id: 1, name: 'Smash 1', age: 25, gender: 'Homme', points: 200, date: '2023-10-01', url_img: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'Smash 2', age: 30, gender: 'Femme', points: 300, date: '2023-10-02', url_img: 'https://via.placeholder.com/150' },
-    { id: 3, name: 'Smash 3', age: 22, gender: 'Autre', points: 350, date: '2023-10-03', url_img: 'https://via.placeholder.com/150' },
-    { id: 4, name: 'Smash 4', age: 28, gender: 'Homme', points: 400, date: '2023-10-04', url_img: 'https://via.placeholder.com/150' },
-    { id: 5, name: 'Smash 5', age: 27, gender: 'Femme', points: 560, date: '2023-10-05', url_img: 'https://via.placeholder.com/150' },
-    { id: 6, name: 'Smash 6', age: 24, gender: 'Autre', points: 789, date: '2023-10-06', url_img: 'https://via.placeholder.com/150' },
+      { id: 1, name: 'Smash 1', age: 25, gender: 'Homme', points: 200, date: '2023-10-01', url_img: 'x' },
+      { id: 2, name: 'Smash 2', age: 30, gender: 'Femme', points: 300, date: '2023-10-02', url_img: 'x' },
+      { id: 3, name: 'Smash 3', age: 22, gender: 'Autre', points: -350, date: '2023-10-03', url_img: 'x' },
+      { id: 4, name: 'Smash 4', age: 28, gender: 'Homme', points: 400, date: '2023-10-04', url_img: 'x' },
+      { id: 5, name: 'Smash 5', age: 27, gender: 'Femme', points: 560, date: '2023-10-05', url_img: 'x' },
+      { id: 6, name: 'Smash 6', age: 24, gender: 'Autre', points: 789, date: '2023-10-06', url_img: 'x' },
+      { id: 7, name: 'Smash 7', age: 26, gender: 'Homme', points: -150, date: '2023-10-01', url_img: 'x' },
+      { id: 8, name: 'Smash 8', age: 29, gender: 'Femme', points: 250, date: '2023-10-02', url_img: 'x' },
+      { id: 9, name: 'Smash 9', age: 23, gender: 'Autre', points: -100, date: '2023-10-03', url_img: 'x' },
+      { id: 10, name: 'Smash 10', age: 31, gender: 'Homme', points: 500, date: '2023-10-04', url_img: 'x' },
+      { id: 11, name: 'Smash 11', age: 28, gender: 'Femme', points: -200, date: '2023-10-05', url_img: 'x' },
+      { id: 12, name: 'Smash 12', age: 25, gender: 'Autre', points: 300, date: '2023-10-06', url_img: 'x' },
   ]);
-
   const totalPoints = smashes.reduce((total, smash) => total + smash.points, 0);
 
   useEffect(() => {
@@ -74,6 +79,22 @@ const ProfilePage = () => {
     setCurrentPage(1);
   };
 
+  const handleIncreasePoints = (id) => {
+    setSmashes((prevSmashes) =>
+      prevSmashes.map((smash) =>
+        smash.id === id ? { ...smash, points: smash.points + 1 } : smash
+      )
+    );
+  };
+
+  const handleDecreasePoints = (id) => {
+    setSmashes((prevSmashes) =>
+      prevSmashes.map((smash) =>
+        smash.id === id ? { ...smash, points: Math.max(smash.points - 1, 0) } : smash
+      )
+    );
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
@@ -101,6 +122,10 @@ const ProfilePage = () => {
               age={smash.age}
               gender={smash.gender}
               url_img={smash.url_img}
+              points={smash.points}
+              size='small'
+              onIncrease={() => handleIncreasePoints(smash.id)}
+              onDecrease={() => handleDecreasePoints(smash.id)}
             />
           ))}
         </div>
