@@ -1,9 +1,8 @@
-// filepath: /c:/Users/matis/Desktop/Ceci est un dossier SSD/IPSSI/BigData-IA/S5_REACT_NATIVE/TP_Groupe/front/src/App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Navbar from "./components/Navbar/Navbar";
 import FooterComponent from "./components/Footer/Footer";
@@ -14,14 +13,21 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import CreateSmashPage from "./pages/CreateSmashPage/CreateSmashPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import ConnectedUsersPage from "./pages/ConnectedUsers/connectedUsers";
+import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsers";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-
+import { initiateWebSocket } from './redux/slices/onlineUsersSlice'; // Ajout
 
 function App() {
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => !!state.auth.token);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(initiateWebSocket());
+    }
+  }, [isAuthenticated, dispatch]);
 
   const openModal = () => {
     setIsModalOpen(true);

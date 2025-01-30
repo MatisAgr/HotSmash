@@ -49,7 +49,7 @@ export const deleteLikeUser = createAsyncThunk(
     'like/deleteLikeUser', async (credentials, { rejectWithValue }) => {
         try {
             await MyAxios.delete(`/like/user/`, credentials);
-            return userId;
+            return credentials.userId; // Utiliser credentials.userId
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
@@ -129,5 +129,3 @@ const smashSlice = createSlice({
 });
 
 export default smashSlice.reducer;
-
-
