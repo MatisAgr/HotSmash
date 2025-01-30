@@ -25,7 +25,7 @@ export default function SmashCard({ name, age, gender, url_img, points, size = '
         <h2 className={`${
           isSmall ? 'text-lg sm:text-xl md:text-2xl' : 'text-2xl sm:text-3xl md:text-4xl'
         } font-bold text-white select-none user-select-none`}>
-          {name}, {age}
+          {name}, {age} ans
         </h2>
         <p className={`${
           isSmall ? 'text-md sm:text-lg md:text-xl' : 'text-lg sm:text-xl md:text-2xl'
