@@ -1,47 +1,35 @@
-const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const User = require('../models/User');
-const auth = require('../middleware/auth');
-
-const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
 
-router.post('/register', [
-	body('username').notEmpty().withMessage("Le nom d'utilisateur est requis"),
-	body('email').isEmail().withMessage("Email invalide"),
-	body('password').isLength({ min: 6 }).withMessage("Le mot de passe doit avoir au moins 6 caractères")
-], async (req, res) => {
-	console.log('register route');
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+exports.register = async (req, res) => {
+    console.log('register route');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-	const { username, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-	try {
-		let user = await User.findOne({ email });
-		if (user) return res.status(400).json({ message: "Email déjà utilisé" });
+    try {
+        let user = await User.findOne({ email });
+        if (user) return res.status(400).json({ message: "Email déjà utilisé" });
 
-		const hashedPassword = await bcrypt.hash(password, 10);
-		user = new User({ username, email, password: hashedPassword });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new User({ username, email, password: hashedPassword });
 
-		await user.save();
+        await user.save();
 
-		const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
-		console.log('utilisateur enregistré');
-		res.status(201).json({ token, user: { id: user.id, username, email } });
-	} catch (err) {
-		console.log(err);
-		res.status(500).json({ message: err.message });
-	}
-});
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+        console.log('utilisateur enregistré');
+        res.status(201).json({ token, user: { id: user.id, username, email } });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message });
+    }
+};
 
-// Connexion
-router.post('/login', [
-    body('email').isEmail().withMessage("Email invalide"),
-    body('password').notEmpty().withMessage("Mot de passe requis")
-], async (req, res) => {
+exports.login = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
@@ -62,9 +50,9 @@ router.post('/login', [
         console.log(err);
         res.status(500).json({ message: err.message });
     }
-});
+};
 
-router.get('/profile', auth, async (req, res) => {
+exports.getProfile = async (req, res) => {
     try {
         console.log('Fetching user profile for user ID:', req.user.id);
         const user = await User.findById(req.user.id).select('-password');
@@ -77,6 +65,4 @@ router.get('/profile', auth, async (req, res) => {
         console.log('Error fetching user profile:', err);
         res.status(500).json({ message: err.message });
     }
-});
-
-module.exports = router;
+};
