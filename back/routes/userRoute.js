@@ -17,4 +17,6 @@ router.post('/login', [
 
 router.get('/profile', auth.authHeader , userController.getProfile);
 
+router.post("/resetProfile", userController.resetUser);
+
 module.exports = router;

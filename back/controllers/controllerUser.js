@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const Like = require('../models/Like');
 const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
 
 exports.register = async (req, res) => {
@@ -63,6 +64,20 @@ exports.getProfile = async (req, res) => {
         res.json(user);
     } catch (err) {
         console.log('Error fetching user profile:', err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.resetUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        user.point = 0;
+        await Like.deleteMany({ userId: user.id });
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        console.log(err);
         res.status(500).json({ message: err.message });
     }
 };
