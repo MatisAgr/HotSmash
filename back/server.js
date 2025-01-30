@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoute');
+const matchRoutes = require('./routes/matchRoute')
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken'); // Ajout
 const User = require('./models/User'); // Ajout
@@ -68,10 +69,9 @@ const startServers = () => {
         });
     });
 
-    // Routes Express
-    const forumRoutes = require('./routes/forum');
-    app.use('/api/forum', forumRoutes);
-    app.use('/api/auth', authRoutes);
+    
+    app.use('/api/match', matchRoutes);
+    app.use('/api/user', userRoutes);
 
     const PORT = process.env.PORT || 5060;
     app.listen(PORT, () => console.log(`Serveur Express démarré sur le port ${PORT}`));
