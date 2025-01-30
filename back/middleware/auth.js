@@ -9,7 +9,6 @@ module.exports.authHeader = async (req, res, next) => {
     }
 
     const token = authHeader.replace('Bearer ', '');
-    console.log('Received token:', token);
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -17,6 +16,7 @@ module.exports.authHeader = async (req, res, next) => {
         if (!req.user) {
             return res.status(401).json({ message: 'User not found, authorization denied' });
         }
+        console.log('User verified:', req.user.username);
         next();
     } catch (err) {
         console.error('Something went wrong with the auth middleware', err);
