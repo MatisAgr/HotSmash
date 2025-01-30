@@ -31,6 +31,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+    console.log('login route');
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
@@ -46,7 +47,7 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
         console.log('Generated token:', token);
         console.log('utilisateur connecté');
-        res.json({ token, user: { id: user.id, username: user.username, email } });
+        res.status(200).json({ token, user: { id: user.id, username: user.username, email } });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
@@ -54,6 +55,7 @@ exports.login = async (req, res) => {
 };
 
 exports.getProfile = async (req, res) => {
+    console.log('getProfile route');
     try {
         console.log('Fetching user profile for user ID:', req.user.id);
         const user = await User.findById(req.user.id).select('-password');
@@ -61,7 +63,8 @@ exports.getProfile = async (req, res) => {
             console.log('User not found');
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
-        res.json(user);
+        console.log('User profile fetched successfully');
+        res.status(200).json(user);
     } catch (err) {
         console.log('Error fetching user profile:', err);
         res.status(500).json({ message: err.message });
@@ -69,13 +72,15 @@ exports.getProfile = async (req, res) => {
 };
 
 exports.resetUser = async (req, res) => {
+    console.log('resetUser route');
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
         user.point = 0;
         await Like.deleteMany({ userId: user.id });
         await user.save();
-        res.json(user);
+        console.log('User reset successfully');
+        res.status(200).json(user);
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });

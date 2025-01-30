@@ -2,34 +2,27 @@ import React, { useEffect, useState, useRef } from 'react';
 import SmashCard from '../../components/Card/SmashCard';
 import ConfirmationModal from '../../components/Modal/ConfirmationModal';
 import * as echarts from 'echarts';
+import { useSelector, useDispatch } from 'react-redux';
+import { profileUser } from '../../redux/slices/authSlice';
+import { getLikesByUserId } from '../../redux/slices/smashSlice';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [smashes, setSmashes] = useState([]);
   const smashesPerPage = 4;
   const chartRef = useRef(null);
 
-  // Données statiques pour l'utilisateur
-  const user = {
-    username: 'JohnDoe',
-    email: 'john.doe@example.com',
-  };
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-  // Données statiques pour les smashes
-  const [smashes, setSmashes] = useState([
-      { id: 1, name: 'Smash 1', age: 25, gender: 'Homme', points: 200, date: '2023-10-01', url_img: 'x' },
-      { id: 2, name: 'Smash 2', age: 30, gender: 'Femme', points: 300, date: '2023-10-02', url_img: 'x' },
-      { id: 3, name: 'Smash 3', age: 22, gender: 'Autre', points: -350, date: '2023-10-03', url_img: 'x' },
-      { id: 4, name: 'Smash 4', age: 28, gender: 'Homme', points: 400, date: '2023-10-04', url_img: 'x' },
-      { id: 5, name: 'Smash 5', age: 27, gender: 'Femme', points: 560, date: '2023-10-05', url_img: 'x' },
-      { id: 6, name: 'Smash 6', age: 24, gender: 'Autre', points: 789, date: '2023-10-06', url_img: 'x' },
-      { id: 7, name: 'Smash 7', age: 26, gender: 'Homme', points: -150, date: '2023-10-01', url_img: 'x' },
-      { id: 8, name: 'Smash 8', age: 29, gender: 'Femme', points: 250, date: '2023-10-02', url_img: 'x' },
-      { id: 9, name: 'Smash 9', age: 23, gender: 'Autre', points: -100, date: '2023-10-03', url_img: 'x' },
-      { id: 10, name: 'Smash 10', age: 31, gender: 'Homme', points: 500, date: '2023-10-04', url_img: 'x' },
-      { id: 11, name: 'Smash 11', age: 28, gender: 'Femme', points: -200, date: '2023-10-05', url_img: 'x' },
-      { id: 12, name: 'Smash 12', age: 25, gender: 'Autre', points: 300, date: '2023-10-06', url_img: 'x' },
-  ]);
+  useEffect(() => {
+    dispatch(profileUser());
+    setSmashes(dispatch(getLikesByUserId()));
+  }, [dispatch]);
+  
+
+
   const totalPoints = smashes.reduce((total, smash) => total + smash.points, 0);
 
   useEffect(() => {

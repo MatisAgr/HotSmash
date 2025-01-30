@@ -14,7 +14,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import CreateSmashPage from "./pages/CreateSmashPage/CreateSmashPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsers";
+import ConnectedUsersPage from "./pages/ConnectedUsers/connectedUsers";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
