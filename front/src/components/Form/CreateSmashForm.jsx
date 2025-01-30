@@ -4,13 +4,43 @@ const CreateSmashForm = () => {
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
+    const [otherSex, setOtherSex] = useState('');
     const [points, setPoints] = useState('');
     const [urlImg, setUrlImg] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log({ name, age, sex, points, urlImg });
+        if (!name) {
+            setError('Name is required');
+            return;
+        }
+        if (!age) {
+            setError('Age is required');
+            return;
+        }
+        if (!sex) {
+            setError('Gender is required');
+            return;
+        }
+        if (sex === 'other' && !otherSex) {
+            setError('Please specify your gender');
+            return;
+        }
+        if (!points) {
+            setError('Points are required');
+            return;
+        }
+        if (points < 0 || points > 1000) {
+            setError('Points must be between 0 and 1000');
+            return;
+        }
+        if (!urlImg) {
+            setError('Image URL is required');
+            return;
+        }
+        setError('');
+        console.log({ name, age, sex: sex === 'other' ? otherSex : sex, points, urlImg });
     };
 
     return (
@@ -31,13 +61,27 @@ const CreateSmashForm = () => {
                 onChange={(e) => setAge(e.target.value)}
             />
 
-            <label className="block text-lg mb-2 text-white">Sex:</label>
-            <input
+            <label className="block text-lg mb-2 text-white">Gender:</label>
+            <select
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
-                type="text"
                 value={sex}
                 onChange={(e) => setSex(e.target.value)}
-            />
+            >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            {sex === 'other' && (
+                <input
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="Please specify"
+                    value={otherSex}
+                    onChange={(e) => setOtherSex(e.target.value)}
+                />
+            )}
 
             <label className="block text-lg mb-2 text-white">Points (0-1000):</label>
             <input
@@ -58,6 +102,12 @@ const CreateSmashForm = () => {
             <button className="bg-blue-500 text-white py-2 px-4 rounded" type="submit">
                 Create Smash
             </button>
+
+            {error && (
+                <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
+                    {error}
+                </div>
+            )}
         </form>
     );
 };
