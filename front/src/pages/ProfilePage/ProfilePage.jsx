@@ -22,9 +22,7 @@ const ProfilePage = () => {
   }, [dispatch]);
   
 
-
-  const totalPoints = smashes.reduce((total, smash) => total + smash.points, 0);
-
+console.log('les likes: ', smashes);
   useEffect(() => {
     if (smashes.length > 0) {
       const chart = echarts.init(chartRef.current);
@@ -99,7 +97,7 @@ const ProfilePage = () => {
       )}
       <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
         <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
-        <p className="text-6xl font-bold text-purple-800">{totalPoints}</p>
+        <p className="text-6xl font-bold text-purple-800">TOTAL POINT</p>
       </div>
       <div className="bg-white shadow-md rounded p-4 mb-6">
         <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
