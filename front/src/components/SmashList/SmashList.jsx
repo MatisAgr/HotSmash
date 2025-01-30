@@ -1,29 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import SmashCard from '../Card/SmashCard';
 
-const usersData = [
-    {
-        id: 1,
-        firstName: 'Marie',
-        lastName: 'Curie',
-        age: 34,
-        gender: 'Féminin',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Marie_Curie_c1920.jpg/640px-Marie_Curie_c1920.jpg',
-    },
-    {
-        id: 2,
-        firstName: 'Albert',
-        lastName: 'Einstein',
-        age: 42,
-        gender: 'Masculin',
-        image: 'https://media.posterlounge.com/img/products/730000/726737/726737_poster.jpg',
-    },
-    // Ajoutez d'autres utilisateurs ici
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { getRandomMatches } from '../../redux/slices/matchSlice';
 
 export default function SmashList() {
-    const [users, setUsers] = useState(usersData);
+    const dispatch = useDispatch();
+    const { items: users, isLoading, error } = useSelector((state) => state.match);
+
+    useEffect(() => {
+        dispatch(getRandomMatches());
+    }, [dispatch]);
+
     const [direction, setDirection] = useState(null);
 
     // Motion values for rotation
@@ -36,7 +25,7 @@ export default function SmashList() {
     const handleAction = (action) => {
         setDirection(action);
         setTimeout(() => {
-            setUsers((prev) => prev.slice(1));
+            dispatch({ type: 'match/removeFirstUser' });
             setDirection(null);
             // Reset rotation after action
             rotateX.set(0);

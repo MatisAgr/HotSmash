@@ -1,13 +1,12 @@
+// filepath: /s:/Bureau/git/HotSmash/front/src/redux/slices/matchSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import MyAxios from '../../utils/interceptor';
 
-export const getAllPosts = createAsyncThunk(
-  'matchs/getAllMatchs',
-  async ({ limit }, { rejectWithValue }) => {
+export const getRandomMatches = createAsyncThunk(
+  'matchs/getRandomMatches',
+  async (_, { rejectWithValue }) => {
     try {
-      const url = `/match/?limit=${limit}`;
-      console.log('Dispatch getAllPosts avec limit:', limit);
-      const response = await MyAxios.get(url);
+      const response = await MyAxios.get('/match/allRandom');
       return response.data;
     } catch (error) {
       return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
@@ -15,41 +14,34 @@ export const getAllPosts = createAsyncThunk(
   }
 );
 
-
 const matchsSlice = createSlice({
   name: 'match',
   initialState: {
     items: [],
-    page: 1,
-    hasMore: true,
     isLoading: false,
     error: null,
   },
   reducers: {
     resetMatch: (state) => {
       state.items = [];
-      state.page = 1;
-      state.hasMore = true;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllPosts.pending, (state) => {
+      .addCase(getRandomMatches.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getAllPosts.fulfilled, (state, action) => {
+      .addCase(getRandomMatches.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.items = [...state.items, ...action.payload.articles];
-        state.page += 1;
-        state.hasMore = action.payload.hasMore;
+        state.items = [...state.items, ...action.payload];
       })
-      .addCase(getAllPosts.rejected, (state, action) => {
+      .addCase(getRandomMatches.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { resetArticles } = matchsSlice.actions;
+export const { resetMatch } = matchsSlice.actions;
 export default matchsSlice.reducer;

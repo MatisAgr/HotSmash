@@ -54,9 +54,10 @@ exports.getAllMatches = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
 exports.getRandomMatches = async (req, res) => {
     try {
-        const matches = await Match.aggregate([{ $sample: { size: await Match.countDocuments() } }]);
+        const matches = await Match.aggregate([{ $sample: { size: 5 } }]);
         res.status(200).json(matches);
     } catch (error) {
         res.status(400).json({ error: error.message });
