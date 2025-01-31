@@ -20,16 +20,14 @@ export default function SmashList() {
       }, [dispatch, user]);
 
     useEffect(() => {
-        setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+        setCurrentIndex(0);
     }, []);
 
     const [direction, setDirection] = useState(null);
 
-    // Motion values for rotation
     const rotateX = useMotionValue(0);
     const rotateY = useMotionValue(0);
 
-    // Tilt transformation
     const rotate = useTransform([rotateX, rotateY], ([latestX, latestY]) => latestY / 10 + latestX / 10);
 
     const handleAction = async (action) => {
@@ -39,20 +37,18 @@ export default function SmashList() {
             const likeData = {
                 userId: user.id,
                 matchId,
-                type: action === 'pass' ? 2 : 1 // Type 2 for pass, 1 for smash
+                type: action === 'pass' ? 2 : 1
             };
             dispatch(createLike(likeData));
-            // Retirer la carte actuelle après l'action
             setTimeout(() => {
                 if (currentIndex >= 4) {
                     dispatch(getRandomMatches());
                     console.log('reset')
-                    setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+                    setCurrentIndex(0);
                 }
-                else{// Incrémenter le compteur à chaque action de like ou pass
-                    setCurrentIndex((currentIndex) => currentIndex + 1); // Passer à l'élément suivant
+                else{
+                    setCurrentIndex((currentIndex) => currentIndex + 1);
                     setDirection(null);
-                    // Reset rotation after action
                     rotateX.set(0);
                     rotateY.set(0);
                 }
@@ -63,8 +59,8 @@ export default function SmashList() {
 
     const handleMouseMove = (event, action) => {
         const bounds = event.currentTarget.getBoundingClientRect();
-        const x = event.clientX - bounds.left; // X position within the element
-        const y = event.clientY - bounds.top;  // Y position within the element
+        const x = event.clientX - bounds.left;
+        const y = event.clientY - bounds.top;
 
         const centerX = bounds.width / 2;
         const centerY = bounds.height / 2;
@@ -168,9 +164,9 @@ export default function SmashList() {
                         animate={{ scale: 0.85, opacity: 1, x: 0 }}
                         exit={{
                             opacity: 0,
-                            x: direction === 'smash' ? 300 : direction === 'pass' ? -300 : 0, // Déplace vers la droite (smash) ou gauche (pass)
-                            rotate: direction === 'smash' ? 15 : direction === 'pass' ? -15 : 0, // Ajoute une légère rotation
-                            transition: { duration: 0.5, ease: "easeInOut" } // Transition fluide
+                            x: direction === 'smash' ? 300 : direction === 'pass' ? -300 : 0,
+                            rotate: direction === 'smash' ? 15 : direction === 'pass' ? -15 : 0,
+                            transition: { duration: 0.5, ease: "easeInOut" }
                         }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="relative z-0 pointer-events-auto"
@@ -191,7 +187,7 @@ export default function SmashList() {
             </div>
 
             {users.length === 0 && (
-                <div className="absolute bottom-10 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white text-xl py-4 px-6 rounded-3xl shadow-lg select-none text-center">
+                <div className="absolute bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white text-xl py-4 px-6 rounded-3xl shadow-lg select-none text-center">
                     <div className='text-4xl mb-2'> 
                         🤯
                     </div>
