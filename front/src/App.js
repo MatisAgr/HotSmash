@@ -5,7 +5,7 @@ import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 
 import Navbar from "./components/Navbar/Navbar";
-import FooterComponent from "./components/Footer/Footer";
+// import FooterComponent from "./components/Footer/Footer";
 
 import Home from "./pages/Home/Home";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
@@ -13,7 +13,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import CreateSmashPage from "./pages/CreateSmashPage/CreateSmashPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import ConnectedUsersPage from "./pages/ConnectedUsers/connectedUsers";
+import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsers";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { initiateWebSocket } from './redux/slices/onlineUsersSlice';

@@ -5,7 +5,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoute');
 const matchRoutes = require('./routes/matchRoute');
 const likeRoutes = require('./routes/likeRoute');
-const WebSocket = require('ws');
+const { broadcastOnlineUsers, onlineUsers, wss } = require('./utils/broadcast');
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Like = require('./models/Like');
@@ -17,29 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const wss = new WebSocket.Server({ port: 8080 });
-
 const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
-
-let onlineUsers = new Map();
-
-const broadcastOnlineUsers = async () => {
-    try {
-        const users = await User.find({ _id: { $in: Array.from(onlineUsers.values()) } }).select('username point');
-        const userList = await Promise.all(users.map(async user => {
-            const smashesToDo = await Like.countDocuments({ userId: user._id, type: 2 });
-            return { id: user._id, username: user.username, points: user.point, smashesToDo };
-        }));
-        const message = JSON.stringify({ type: 'onlineUsers', users: userList });
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
-    } catch (err) {
-        console.log('Erreur lors de la diffusion des utilisateurs en ligne:', err);
-    }
-};
 
 const startServers = () => {
     wss.on('connection', (ws) => {
@@ -94,14 +72,6 @@ const connectWithRetry = () => {
 
 mongoose.connection.on('connected', () => {
     console.log('Mongoose connecté à la base de données');
-});
-
-mongoose.connection.on('error', (err) => {
-    console.log('Mongoose connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose déconnecté');
 });
 
 connectWithRetry();

@@ -1,6 +1,7 @@
 const Match = require('../models/Match');
 const User = require('../models/User');
 const Like = require('../models/Like');
+const jwt = require('jsonwebtoken');
 
 exports.createMatchProfile = async (req, res) => {
     try {
@@ -84,7 +85,7 @@ exports.passMatch = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decodedToken.id;
+        const userId = decodedToken.userId;
 
         const like = new Like({
             userId: userId,

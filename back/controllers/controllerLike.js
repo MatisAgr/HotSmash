@@ -1,6 +1,9 @@
 const Like = require('../models/Like');
+const Match = require('../models/Match');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { broadcastOnlineUsers } = require('../utils/broadcast');
 
 exports.getLikesByUserId = async (req, res) => {
     try {
@@ -77,6 +80,11 @@ exports.createLike = async (req, res) => {
         const userId = decodedToken.userId;
         console.log('User ID:', userId);
 
+        const match = await Match.findById(req.body.matchId);
+        if (!match) {
+            return res.status(404).json({ message: 'Match not found' });
+        }
+
         const like = new Like({
             userId: userId,
             matchId: req.body.matchId,
@@ -86,6 +94,24 @@ exports.createLike = async (req, res) => {
 
         const newLike = await like.save();
         console.log('New Like:', newLike);
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (req.body.type === 1) { // Smash
+            user.point += match.point;
+        } else if (req.body.type === 2) { // Pass
+            user.point -= match.point;
+        }
+
+        await user.save();
+        console.log('User points updated:', user.point);
+
+        // Diffuser les utilisateurs en ligne avec les points mis à jour
+        await broadcastOnlineUsers();
+
         res.status(201).json(newLike);
     } catch (error) {
         console.error('Error in createLike:', error);

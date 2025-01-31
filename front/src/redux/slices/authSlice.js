@@ -52,21 +52,6 @@ export const profileUser = createAsyncThunk(
   }
 );
 
-export const updateUserPoints = createAsyncThunk(
-  'auth/updateUserPoints',
-  async (userId, { rejectWithValue }) => {
-    try {
-      const response = await MyAxios.get(`/user/${userId}`);
-
-      console.log('Points utilisateur mis à jour:', response.data);
-
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || 'Erreur inconnue');
-    }
-  }
-);
-
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -113,18 +98,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      .addCase(updateUserPoints.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(updateUserPoints.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
-      })
-      .addCase(updateUserPoints.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      });
   },
 });
 

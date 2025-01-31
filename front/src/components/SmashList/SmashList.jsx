@@ -3,8 +3,8 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import SmashCard from '../Card/SmashCard';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getRandomMatches, passMatch, smashMatch } from '../../redux/slices/matchSlice';
-import { updateUserPoints } from '../../redux/slices/authSlice';
+import { getRandomMatches } from '../../redux/slices/matchSlice';
+import { createLike } from '../../redux/slices/smashSlice';
 
 export default function SmashList() {
     const dispatch = useDispatch();
@@ -30,12 +30,12 @@ export default function SmashList() {
         setDirection(action);
         if (users.length > 0 && user) {
             const matchId = users[0]._id;
-            if (action === 'pass') {
-                dispatch(passMatch({ userId: user.id, matchId }));
-            } else if (action === 'smash') {
-                dispatch(smashMatch({ userId: user.id, matchId }));
-            }
-            dispatch(updateUserPoints(user.id));
+            const likeData = {
+                userId: user.id,
+                matchId,
+                type: action === 'pass' ? 2 : 1 // Type 2 for pass, 1 for smash
+            };
+            dispatch(createLike(likeData));
             // Retirer la carte actuelle après l'action
             setTimeout(() => {
                 dispatch(getRandomMatches());
