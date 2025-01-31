@@ -146,34 +146,29 @@ export default function SmashList() {
 
             {/* SmashCard au centre */}
             <div className="flex items-center justify-center w-full absolute z-6 pointer-events-none">
-                <AnimatePresence>
-                    {users.length > 0 && (
-                        <motion.div
-                            key={users[0]._id}
-                            initial={{ scale: 0.7, opacity: 0 }}
-                            animate={{ scale: 0.85, opacity: 1 }}
-                            exit={{
-                                x: direction === 'smash' ? 500 : -500,
-                                rotate: direction === 'smash' ? 30 : -30,
-                                opacity: 0,
-                            }}
-                            transition={{ duration: 0.5 }}
-                            className="relative z-0 pointer-events-auto"
-                            style={{ rotate: rotate }}
-                            drag="x"
-                            dragConstraints={false}
-                            dragElastic={0.2}
-                            onDrag={(e, info) => {
-                                // Inclinaison pendant le drag
-                                rotateX.set(info.offset.y / 2);
-                                rotateY.set(info.offset.x / 2);
-                            }}
-                            onDragEnd={handleDragEnd}
-                        >
-                            <SmashCard {...users[0]} />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+            <AnimatePresence mode="wait">
+            {users.length > 0 && (
+                <motion.div
+                    key={users[0]._id}
+                    initial={{ scale: 0.85, opacity: 0, x: 0 }}
+                    animate={{ scale: 0.85, opacity: 1, x: 0 }}
+                    exit={{ opacity: 0}}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="relative z-0 pointer-events-auto"
+                    style={{ rotate: rotate }}
+                    drag="x"
+                    dragConstraints={false}
+                    dragElastic={0.2}
+                    onDrag={(e, info) => {
+                        rotateX.set(info.offset.y / 2);
+                        rotateY.set(info.offset.x / 2);
+                    }}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SmashCard {...users[0]} />
+                </motion.div>
+            )}
+            </AnimatePresence>
             </div>
 
             {users.length === 0 && (
