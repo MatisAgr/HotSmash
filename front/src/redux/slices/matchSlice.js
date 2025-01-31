@@ -8,7 +8,7 @@ export const getRandomMatches = createAsyncThunk(
       const response = await MyAxios.get('/match/allRandom');
       return response.data;
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue' });
     }
   }
 );
@@ -20,7 +20,7 @@ export const createMatch = createAsyncThunk(
       const response = await MyAxios.post('/match', matchData);
       return response.data;
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue', status: error.response?.status });
     }
   }
 );
@@ -65,6 +65,18 @@ const matchsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(getRandomMatches.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(createMatch.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createMatch.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(createMatch.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

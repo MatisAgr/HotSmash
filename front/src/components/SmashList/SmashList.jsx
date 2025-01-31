@@ -8,7 +8,7 @@ import { createLike } from '../../redux/slices/smashSlice';
 
 export default function SmashList() {
   const dispatch = useDispatch();
-  const { items: users, isLoading, error, } = useSelector((state) => state.match);
+  const { items: users, isLoading, error } = useSelector((state) => state.match);
   const user = useSelector((state) => state.auth.user);
 
   const [currentIndex, setCurrentIndex] = useState(0); // État local pour suivre l'index actuel

@@ -13,7 +13,7 @@ export default function ConnectedUsers() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Utilisateurs Connectés</h2>
+      <h1 className="text-2xl text-white font-bold mb-4">Utilisateurs Connectés</h1>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="grid grid-cols-1 gap-4">
         {filteredUsers.map(user => (
