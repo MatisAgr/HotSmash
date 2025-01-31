@@ -137,6 +137,7 @@ const ProfilePage = () => {
               url_img={smash.url_img}
               points={smash.points}
               type={smash.type}
+              date={smash.date} // Pass the date to SmashCard
               size='small'
             />
           ))}

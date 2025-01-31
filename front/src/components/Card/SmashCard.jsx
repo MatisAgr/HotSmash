@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function SmashCard({ name, age, gender, url_img, points, type, size = 'normal' }) {
+export default function SmashCard({ name, age, gender, url_img, points, type, date, size = 'normal' }) {
   const isSmall = size === 'small';
+  const formattedDate = date ? new Date(date).toLocaleString() : null;
 
   return (
     <motion.div
@@ -13,6 +14,11 @@ export default function SmashCard({ name, age, gender, url_img, points, type, si
       tabIndex={0}
       onFocus={(e) => e.target.blur()}
     >
+      {formattedDate && (
+        <div className={`absolute top-4 left-4 font-bold py-1 px-3 rounded-lg bg-blue-600 text-white`}>
+          {formattedDate}
+        </div>
+      )}
       <img
         className={`${
           isSmall ? 'h-48 sm:h-56 md:h-64 lg:h-72' : 'h-96 sm:h-[28rem] md:h-[32rem] lg:h-[36rem]'
