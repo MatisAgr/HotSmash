@@ -1,15 +1,12 @@
-import React from 'react'
+import React from 'react';
+import { View } from 'react-native';
 
-import RegisterForm from '../../components/Form/RegisterForm'
+import RegisterForm from '../components/RegisterForm';
 
 export default function RegisterPage() {
   return (
-    <>
-
-        <div className='flex flex-col items-center justify-center h-screen'>
-            <RegisterForm />
-        </div>
-        
-    </>
-  )
+    <View className="flex-1 items-center justify-center">
+      <RegisterForm />
+    </View>
+  );
 }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import SmashCard from '../../components/Card/SmashCard';
-import ConfirmationModal from '../../components/Modal/ConfirmationModal';
-import * as echarts from 'echarts';
+import { View, Text, Button, ScrollView, TouchableOpacity, Picker } from 'react-native';
+import SmashCard from '../components/SmashCard';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { profileUser, resetStats } from '../../redux/slices/authSlice';
+import { profileUser, resetStats } from '../redux/slices/authSlice';
+import { TailwindProvider } from 'tailwindcss-react-native';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,8 +21,6 @@ const ProfilePage = () => {
   }, [dispatch]);
 
   const totalPoints = matches.reduce((total, match) => total + (match.type === 1 ? match.points : -match.points), 0);
-
-  console.log('les likes: ', matches);
 
   const groupPointsByInterval = (matches, interval) => {
     return matches.reduce((acc, match) => {
@@ -46,36 +45,6 @@ const ProfilePage = () => {
 
   const groupedPoints = groupPointsByInterval(matches, timeInterval);
 
-  useEffect(() => {
-    if (groupedPoints && Object.keys(groupedPoints).length > 0) {
-      const chart = echarts.init(chartRef.current);
-      const option = {
-        title: {
-          text: 'Points de détraquage mental par intervalle',
-        },
-        tooltip: {
-          trigger: 'axis',
-        },
-        xAxis: {
-          type: 'category',
-          data: Object.keys(groupedPoints),
-        },
-        yAxis: {
-          type: 'value',
-          min: 0,
-        },
-        series: [
-          {
-            name: 'Points de détraquage mental',
-            type: 'line',
-            data: Object.values(groupedPoints),
-          },
-        ],
-      };
-      chart.setOption(option);
-    }
-  }, [groupedPoints]);
-
   const indexOfLastSmash = currentPage * smashesPerPage;
   const indexOfFirstSmash = indexOfLastSmash - smashesPerPage;
   const currentSmashes = matches.slice(indexOfFirstSmash, indexOfLastSmash);
@@ -94,88 +63,89 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
-      {user && (
-        <>
-          <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
-            <p className="text-3xl font-bold">Username: {user.username}</p>
-            <p className="text-2xl"><strong>Email:</strong> {user.email}</p>
-          </div>
-          <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
-            <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
-            <p className="text-6xl font-bold text-purple-800">{user.point}</p>
-          </div>
-        </>
-      )}
-      <div className="bg-white shadow-md rounded p-4 mb-6">
-        <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
-        <div className="mb-4">
-          <label htmlFor="timeInterval" className="mr-2">Intervalle de temps:</label>
-          <select
-            id="timeInterval"
-            value={timeInterval}
-            onChange={(e) => setTimeInterval(e.target.value)}
-            className="p-2 border rounded"
+    <TailwindProvider>
+      <ScrollView className="container mx-auto p-4">
+        <Text className="text-4xl font-bold mb-4 text-white">Profile Page</Text>
+        {user && (
+          <>
+            <View className="bg-white shadow-md rounded p-4 mb-6 text-center">
+              <Text className="text-3xl font-bold">Username: {user.username}</Text>
+              <Text className="text-2xl"><Text className="font-bold">Email:</Text> {user.email}</Text>
+            </View>
+            <View className="bg-white shadow-md rounded p-4 mb-6 text-center">
+              <Text className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</Text>
+              <Text className="text-6xl font-bold text-purple-800">{user.point}</Text>
+            </View>
+          </>
+        )}
+        <View className="bg-white shadow-md rounded p-4 mb-6">
+          <Text className="text-2xl font-bold mb-4">Statistiques de Smashing</Text>
+          <View className="mb-4">
+            <Text className="mr-2">Intervalle de temps:</Text>
+            <Picker
+              selectedValue={timeInterval}
+              onValueChange={(itemValue) => setTimeInterval(itemValue)}
+              className="p-2 border rounded"
+            >
+              <Picker.Item label="Date" value="date" />
+              <Picker.Item label="Heure" value="hour" />
+              <Picker.Item label="15 minutes" value="15min" />
+            </Picker>
+          </View>
+          <View ref={chartRef} style={{ width: '100%', height: 400 }}></View>
+        </View>
+        <View className="bg-white shadow-md rounded p-4">
+          <Text className="text-2xl font-bold mb-4">Liste des Smashes</Text>
+          <View className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {currentSmashes.map((smash) => (
+              <SmashCard
+                key={smash.matchId}
+                name={smash.name}
+                age={smash.age}
+                gender={smash.gender}
+                url_img={smash.url_img}
+                points={smash.points}
+                type={smash.type}
+                date={smash.date} // Pass the date to SmashCard
+                size='small'
+              />
+            ))}
+          </View>
+          <View className="flex justify-between mt-4">
+            <TouchableOpacity
+              onPress={handlePreviousPage}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={currentPage === 1}
+            >
+              Previous
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleNextPage}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={indexOfLastSmash >= matches.length}
+            >
+              Next
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View className="flex justify-center mt-6">
+          <TouchableOpacity
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg focus:outline-none focus:shadow-outline text-3xl"
+            onPress={() => setIsModalOpen(true)}
           >
-            <option value="date">Date</option>
-            <option value="hour">Heure</option>
-            <option value="15min">15 minutes</option>
-          </select>
-        </div>
-        <div ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
-      </div>
-      <div className="bg-white shadow-md rounded p-4">
-        <h2 className="text-2xl font-bold mb-4">Liste des Smashes</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {currentSmashes.map((smash) => (
-            <SmashCard
-              key={smash.matchId}
-              name={smash.name}
-              age={smash.age}
-              gender={smash.gender}
-              url_img={smash.url_img}
-              points={smash.points}
-              type={smash.type}
-              date={smash.date} // Pass the date to SmashCard
-              size='small'
-            />
-          ))}
-        </div>
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={handlePreviousPage}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <button
-            onClick={handleNextPage}
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            disabled={indexOfLastSmash >= matches.length}
-          >
-            Next
-          </button>
-        </div>
-      </div>
-      <div className="flex justify-center mt-6">
-        <button
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg focus:outline-none focus:shadow-outline text-3xl"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Reset les stats
-        </button>
-      </div>
-      <ConfirmationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={() => {
-          handleReset();
-          setIsModalOpen(false);
-        }}
-      />
-    </div>
+            Reset les stats
+          </TouchableOpacity>
+        </View>
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={() => {
+            handleReset();
+            setIsModalOpen(false);
+          }}
+        />
+      </ScrollView>
+    </TailwindProvider>
   );
 };
 
