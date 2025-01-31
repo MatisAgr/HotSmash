@@ -18,8 +18,10 @@ import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsersPage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import { initiateWebSocket } from './redux/slices/onlineUsersSlice';
 import { profileUser } from './redux/slices/authSlice';
+import useWebSocket from './hooks/useWebSocket';
 
 function App() {
+  useWebSocket();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => !!state.auth.token);
 
