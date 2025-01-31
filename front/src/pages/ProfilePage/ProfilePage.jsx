@@ -22,6 +22,10 @@ const ProfilePage = () => {
   }, [dispatch]);
   
 
+
+  const totalPoints = smashes.reduce((total, smash) => total + smash.points, 0);
+
+
 console.log('les likes: ', smashes);
   useEffect(() => {
     if (smashes.length > 0) {

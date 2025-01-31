@@ -106,7 +106,7 @@ exports.smashMatch = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decodedToken.id;
+        const userId = decodedToken.userId;
 
         const like = new Like({
             userId: userId,
@@ -121,5 +121,24 @@ exports.smashMatch = async (req, res) => {
         res.status(201).json(newLike);
     } catch (error) {
         res.status(400).json({ message: error.message });
+    }
+};
+
+exports.getMatchSmash = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.userId;
+
+        const likes = await Like.find({ userId: userId, type: 2 });
+        const matchIds = likes.map(like => like.matchId);
+
+        const matches = await Match.find({ _id: { $in: matchIds } });
+
+        console.log('Matches:', matches);
+        res.status(200).json(matches);
+    } catch (error) {
+        console.error('Error in getMatchSmash:', error);
+        res.status(500).json({ message: error.message });
     }
 };
