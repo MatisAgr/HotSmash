@@ -109,8 +109,10 @@ exports.resetUser = async (req, res) => {
         user.point = 0;
         await Like.deleteMany({ userId: user.id });
         await user.save();
+
+        const updatedUser = await User.findById(userId).select('-password');
         console.log('User reset successfully');
-        res.status(200).json(user);
+        res.status(200).json({ user: updatedUser, pointsByDay: {}, matches: [] });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
