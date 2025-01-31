@@ -15,6 +15,10 @@ const likeSchema = new mongoose.Schema({
         type: Number,
         enum: [0, 1, 2],
         required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 }, {
     collection: 'likes',
