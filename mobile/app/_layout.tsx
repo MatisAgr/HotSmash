@@ -32,10 +32,14 @@ export default function RootLayout() {
     <TailwindProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="home" options={{ headerShown: false }} />
+          <Stack.Screen name="register" />
+          <Stack.Screen name="login" />
+          <Stack.Screen name="createSmash" />
+          <Stack.Screen name="connectedUsers" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="not-found" />
         </Stack>
-        <StatusBar style="auto" />
       </ThemeProvider>
     </TailwindProvider>
   );
