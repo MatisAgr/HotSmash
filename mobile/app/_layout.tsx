@@ -6,10 +6,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { TailwindProvider } from 'tailwindcss-react-native';
+import { Provider } from 'react-redux';
+import store from '@/redux/store';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -29,18 +30,20 @@ export default function RootLayout() {
   }
 
   return (
-    <TailwindProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="Home" options={{ headerShown: false }} />
-          <Stack.Screen name="Register" />
-          <Stack.Screen name="Login" />
-          <Stack.Screen name="CreateSmash" />
-          <Stack.Screen name="ConnectedUsers" />
-          <Stack.Screen name="Profile" />
-          <Stack.Screen name="not-found" />
-        </Stack>
-      </ThemeProvider>
-    </TailwindProvider>
+    <Provider store={store}>
+      <TailwindProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="Home" options={{ headerShown: false }} />
+            <Stack.Screen name="Register" />
+            <Stack.Screen name="Login" />
+            <Stack.Screen name="CreateSmash" />
+            <Stack.Screen name="ConnectedUsers" />
+            <Stack.Screen name="Profile" />
+            <Stack.Screen name="not-found" />
+          </Stack>
+        </ThemeProvider>
+      </TailwindProvider>
+    </Provider>
   );
 }
