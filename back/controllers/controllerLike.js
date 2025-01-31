@@ -3,6 +3,7 @@ const Match = require('../models/Match');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { broadcastOnlineUsers } = require('../utils/broadcast');
 
 exports.getLikesByUserId = async (req, res) => {
     try {
@@ -107,6 +108,9 @@ exports.createLike = async (req, res) => {
 
         await user.save();
         console.log('User points updated:', user.point);
+
+        // Diffuser les utilisateurs en ligne avec les points mis à jour
+        await broadcastOnlineUsers();
 
         res.status(201).json(newLike);
     } catch (error) {
