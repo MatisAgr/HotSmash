@@ -130,11 +130,12 @@ const CreateSmashForm = () => {
                     />
                 )}
 
-                <label className="block text-lg mb-2 text-white">Points (0-1000):</label>
+                <label className="block text-lg mb-2 text-white">Points de détraquage mental:</label>
                 <input
                     className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
                     type="number"
                     value={points}
+                    placeholder='0 - 1000'
                     onChange={(e) => setPoints(e.target.value)}
                 />
 
@@ -158,7 +159,7 @@ const CreateSmashForm = () => {
 
                 {error && (
                     <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
-                        {error.message.includes('duplicate key error') ? 'Le match existe déjà et ne peut pas être recréé.' : error.message}
+                        {error.status === 400 ? 'Le smasher existe déjà.' : error.message}
                     </div>
                 )}
 
@@ -170,9 +171,9 @@ const CreateSmashForm = () => {
             </form>
             <div className="p-5 w-full md:w-1/2 flex items-center justify-center z-10">
                 <SmashCard
-                    name={name || 'Nom'}
-                    age={age || 'Âge'}
-                    gender={sex === 'Autre' ? customSex : sex || 'Genre'}
+                    name={name || '[Nom]'}
+                    age={age || '[Âge]'}
+                    gender={sex === '[Autre]' ? customSex : sex || '[Genre]'}
                     url_img={urlImg || 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1200px-No-Image-Placeholder.svg.png'}
                 />
             </div>
