@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const Like = require('../models/Like');
 const Match = require('../models/Match');
+const { broadcastOnlineUsers } = require('../utils/broadcast');
 const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
 
 exports.register = async (req, res) => {
@@ -113,6 +114,9 @@ exports.resetUser = async (req, res) => {
         const updatedUser = await User.findById(userId).select('-password');
         console.log('User reset successfully');
         res.status(200).json({ user: updatedUser, pointsByDay: {}, matches: [] });
+
+        // Envoyer la mise à jour par WebSocket
+        await broadcastOnlineUsers();
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
