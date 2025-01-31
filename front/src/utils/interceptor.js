@@ -25,12 +25,11 @@ MyAxios.interceptors.request.use(
 // Response interceptor
 MyAxios.interceptors.response.use(
     response => {
-        // Faire quelque chose avec les données de réponse
         console.log('Réponse reçue:', response);
         return response;
     },
     error => {
-        // Faire quelque chose avec l'erreur de réponse
+  
         console.log('Erreur de réponse:', error);
         return Promise.reject(error);
     }
