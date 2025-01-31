@@ -4,27 +4,22 @@ import ConfirmationModal from '../../components/Modal/ConfirmationModal';
 import * as echarts from 'echarts';
 import { useSelector, useDispatch } from 'react-redux';
 import { profileUser } from '../../redux/slices/authSlice';
-import { getLikesByUserId } from '../../redux/slices/smashSlice';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [smashes, setSmashes] = useState([]);
   const smashesPerPage = 4;
   const chartRef = useRef(null);
 
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const { user, pointsByDay, matches } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(profileUser());
-    setSmashes(dispatch(getLikesByUserId()));
   }, [dispatch]);
-  
 
-console.log('les likes: ', smashes);
   useEffect(() => {
-    if (smashes.length > 0) {
+    if (pointsByDay && Object.keys(pointsByDay).length > 0) {
       const chart = echarts.init(chartRef.current);
       const option = {
         title: {
@@ -35,7 +30,7 @@ console.log('les likes: ', smashes);
         },
         xAxis: {
           type: 'category',
-          data: smashes.map((smash) => smash.date),
+          data: Object.keys(pointsByDay),
         },
         yAxis: {
           type: 'value',
@@ -45,17 +40,17 @@ console.log('les likes: ', smashes);
           {
             name: 'Points de détraquage mental',
             type: 'line',
-            data: smashes.map((smash) => smash.points),
+            data: Object.values(pointsByDay),
           },
         ],
       };
       chart.setOption(option);
     }
-  }, [smashes]);
+  }, [pointsByDay]);
 
   const indexOfLastSmash = currentPage * smashesPerPage;
   const indexOfFirstSmash = indexOfLastSmash - smashesPerPage;
-  const currentSmashes = smashes.slice(indexOfFirstSmash, indexOfLastSmash);
+  const currentSmashes = matches.slice(indexOfFirstSmash, indexOfLastSmash);
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
@@ -66,24 +61,8 @@ console.log('les likes: ', smashes);
   };
 
   const handleReset = () => {
-    setSmashes([]);
+    // Reset logic here
     setCurrentPage(1);
-  };
-
-  const handleIncreasePoints = (id) => {
-    setSmashes((prevSmashes) =>
-      prevSmashes.map((smash) =>
-        smash.id === id ? { ...smash, points: smash.points + 1 } : smash
-      )
-    );
-  };
-
-  const handleDecreasePoints = (id) => {
-    setSmashes((prevSmashes) =>
-      prevSmashes.map((smash) =>
-        smash.id === id ? { ...smash, points: Math.max(smash.points - 1, 0) } : smash
-      )
-    );
   };
 
   return (
@@ -93,12 +72,9 @@ console.log('les likes: ', smashes);
         <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
           <p className="text-3xl font-bold">Username: {user.username}</p>
           <p className="text-2xl"><strong>Email:</strong> {user.email}</p>
+          <p className="text-2xl"><strong>Points:</strong> {user.point}</p>
         </div>
       )}
-      <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
-        <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
-        <p className="text-6xl font-bold text-purple-800">TOTAL POINT</p>
-      </div>
       <div className="bg-white shadow-md rounded p-4 mb-6">
         <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
         <div ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
@@ -108,15 +84,13 @@ console.log('les likes: ', smashes);
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {currentSmashes.map((smash) => (
             <SmashCard
-              key={smash.id}
+              key={smash.matchId}
               name={smash.name}
               age={smash.age}
               gender={smash.gender}
               url_img={smash.url_img}
               points={smash.points}
               size='small'
-              onIncrease={() => handleIncreasePoints(smash.id)}
-              onDecrease={() => handleDecreasePoints(smash.id)}
             />
           ))}
         </div>
@@ -131,7 +105,7 @@ console.log('les likes: ', smashes);
           <button
             onClick={handleNextPage}
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            disabled={indexOfLastSmash >= smashes.length}
+            disabled={indexOfLastSmash >= matches.length}
           >
             Next
           </button>

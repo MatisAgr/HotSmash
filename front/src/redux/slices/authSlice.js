@@ -60,6 +60,8 @@ const authSlice = createSlice({
     isLoading: false,
     error: null,
     registerSuccess: false,
+    pointsByDay: {},
+    matches: [],
   },
   reducers: {
     logout: (state) => {
@@ -92,7 +94,9 @@ const authSlice = createSlice({
       })
       .addCase(profileUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.pointsByDay = action.payload.pointsByDay;
+        state.matches = action.payload.matches;
       })
       .addCase(profileUser.rejected, (state, action) => {
         state.isLoading = false;

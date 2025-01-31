@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const Like = require('../models/Like');
+const Match = require('../models/Match');
 const JWT_SECRET = process.env.JWT_SECRET || "ctrosecretlemotlàvrmt";
 
 exports.register = async (req, res) => {
@@ -63,8 +64,32 @@ exports.getProfile = async (req, res) => {
             console.log('User not found');
             return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
+
+        const likes = await Like.find({ userId: req.user.id }).populate('matchId');
+        const pointsByDay = likes.reduce((acc, like) => {
+            if (like.createdAt) {
+                const date = like.createdAt.toISOString().split('T')[0];
+                const points = like.type === 1 ? like.matchId.point : -like.matchId.point;
+                if (!acc[date]) {
+                    acc[date] = 0;
+                }
+                acc[date] += points;
+            }
+            return acc;
+        }, {});
+
+        const matches = likes.map(like => ({
+            matchId: like.matchId._id,
+            name: like.matchId.name,
+            age: like.matchId.age,
+            gender: like.matchId.gender,
+            url_img: like.matchId.url_img,
+            type: like.type,
+            date: like.createdAt
+        }));
+
         console.log('User profile fetched successfully');
-        res.status(200).json(user);
+        res.status(200).json({ user, pointsByDay, matches });
     } catch (err) {
         console.log('Error fetching user profile:', err);
         res.status(500).json({ message: err.message });

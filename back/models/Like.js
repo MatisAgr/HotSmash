@@ -13,7 +13,7 @@ const likeSchema = new mongoose.Schema({
     },
     type: {
         type: Number,
-        enum: [1, 2, 3],
+        enum: [0, 1, 2],
         required: true
     }
 }, {
