@@ -16,6 +16,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ConnectedUsersPage from "./pages/ConnectedUsers/ConnectedUsersPage";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+
 import { initiateWebSocket } from './redux/slices/onlineUsersSlice';
 import { profileUser } from './redux/slices/authSlice';
 import useWebSocket from './hooks/useWebSocket';

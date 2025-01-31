@@ -4,6 +4,7 @@ import ConfirmationModal from '../../components/Modal/ConfirmationModal';
 import * as echarts from 'echarts';
 import { useSelector, useDispatch } from 'react-redux';
 import { profileUser, resetStats } from '../../redux/slices/authSlice';
+import Notification from '../../components/Notification/Notification';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,6 +97,7 @@ const ProfilePage = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
+      <Notification/>
       {user && (
         <>
           <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
