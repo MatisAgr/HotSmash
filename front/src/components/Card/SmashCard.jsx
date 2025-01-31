@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function SmashCard({ name, age, gender, url_img, points, size = 'normal', onIncrease, onDecrease }) {
+export default function SmashCard({ name, age, gender, url_img, points, type, size = 'normal' }) {
   const isSmall = size === 'small';
 
   return (
@@ -34,9 +34,9 @@ export default function SmashCard({ name, age, gender, url_img, points, size = '
         </p>
         {points !== undefined && (
           <div className={`absolute bottom-4 right-4 font-bold py-1 px-3 rounded-lg ${
-            points >= 0 ? 'bg-red-600' : 'bg-lime-700'
+            type === 1 ? 'bg-red-600' : 'bg-lime-700'
           } text-white`}>
-            {points >= 0 ? `+${points}` : `${points}`} points
+            {type === 1 ? `+${points}` : `-${points}`} points
           </div>
         )}
       </div>

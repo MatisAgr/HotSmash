@@ -3,7 +3,7 @@ import SmashCard from '../../components/Card/SmashCard';
 import ConfirmationModal from '../../components/Modal/ConfirmationModal';
 import * as echarts from 'echarts';
 import { useSelector, useDispatch } from 'react-redux';
-import { profileUser } from '../../redux/slices/authSlice';
+import { profileUser, resetStats } from '../../redux/slices/authSlice';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,11 +12,15 @@ const ProfilePage = () => {
   const chartRef = useRef(null);
 
   const dispatch = useDispatch();
-  const { user, pointsByDay, matches } = useSelector((state) => state.auth);
+  const { user, pointsByDay, matches = [] } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(profileUser());
   }, [dispatch]);
+
+  const totalPoints = matches.reduce((total, match) => total + (match.type === 1 ? match.points : -match.points), 0);
+
+  console.log('les likes: ', matches);
 
   useEffect(() => {
     if (pointsByDay && Object.keys(pointsByDay).length > 0) {
@@ -61,7 +65,7 @@ const ProfilePage = () => {
   };
 
   const handleReset = () => {
-    // Reset logic here
+    dispatch(resetStats());
     setCurrentPage(1);
   };
 
@@ -69,11 +73,16 @@ const ProfilePage = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold mb-4 text-white">Profile Page</h1>
       {user && (
-        <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
-          <p className="text-3xl font-bold">Username: {user.username}</p>
-          <p className="text-2xl"><strong>Email:</strong> {user.email}</p>
-          <p className="text-2xl"><strong>Points:</strong> {user.point}</p>
-        </div>
+        <>
+          <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
+            <p className="text-3xl font-bold">Username: {user.username}</p>
+            <p className="text-2xl"><strong>Email:</strong> {user.email}</p>
+          </div>
+          <div className="bg-white shadow-md rounded p-4 mb-6 text-center">
+            <h2 className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</h2>
+            <p className="text-6xl font-bold text-purple-800">{user.point}</p>
+          </div>
+        </>
       )}
       <div className="bg-white shadow-md rounded p-4 mb-6">
         <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
@@ -90,6 +99,7 @@ const ProfilePage = () => {
               gender={smash.gender}
               url_img={smash.url_img}
               points={smash.points}
+              type={smash.type}
               size='small'
             />
           ))}

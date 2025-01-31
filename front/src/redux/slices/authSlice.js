@@ -52,6 +52,21 @@ export const profileUser = createAsyncThunk(
   }
 );
 
+export const resetStats = createAsyncThunk(
+  'auth/resetStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await MyAxios.post('user/resetProfile');
+
+      console.log('Statistiques réinitialisées:', response.data);
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Erreur inconnue');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -102,6 +117,20 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
+      .addCase(resetStats.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(resetStats.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.pointsByDay = action.payload.pointsByDay;
+        state.matches = action.payload.matches;
+      })
+      .addCase(resetStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 

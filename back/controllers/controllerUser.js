@@ -85,6 +85,7 @@ exports.getProfile = async (req, res) => {
             gender: like.matchId.gender,
             url_img: like.matchId.url_img,
             type: like.type,
+            points: like.matchId.point,
             date: like.createdAt
         }));
 
@@ -99,7 +100,11 @@ exports.getProfile = async (req, res) => {
 exports.resetUser = async (req, res) => {
     console.log('resetUser route');
     try {
-        const user = await User.findById(req.user.id);
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, JWT_SECRET);
+        const userId = decodedToken.userId;
+
+        const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
         user.point = 0;
         await Like.deleteMany({ userId: user.id });
