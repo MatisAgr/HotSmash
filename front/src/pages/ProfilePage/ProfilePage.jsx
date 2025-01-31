@@ -8,6 +8,7 @@ import { profileUser, resetStats } from '../../redux/slices/authSlice';
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [timeInterval, setTimeInterval] = useState('date'); // 'date', 'hour', '15min'
   const smashesPerPage = 4;
   const chartRef = useRef(null);
 
@@ -22,19 +23,42 @@ const ProfilePage = () => {
 
   console.log('les likes: ', matches);
 
+  const groupPointsByInterval = (matches, interval) => {
+    return matches.reduce((acc, match) => {
+      const date = new Date(match.date);
+      let key;
+      if (interval === 'date') {
+        key = date.toISOString().split('T')[0];
+      } else if (interval === 'hour') {
+        key = date.toISOString().split(':')[0];
+      } else if (interval === '15min') {
+        const minutes = Math.floor(date.getMinutes() / 15) * 15;
+        key = `${date.toISOString().split(':')[0]}:${minutes.toString().padStart(2, '0')}`;
+      }
+      const points = match.type === 1 ? match.points : -match.points;
+      if (!acc[key]) {
+        acc[key] = 0;
+      }
+      acc[key] += points;
+      return acc;
+    }, {});
+  };
+
+  const groupedPoints = groupPointsByInterval(matches, timeInterval);
+
   useEffect(() => {
-    if (pointsByDay && Object.keys(pointsByDay).length > 0) {
+    if (groupedPoints && Object.keys(groupedPoints).length > 0) {
       const chart = echarts.init(chartRef.current);
       const option = {
         title: {
-          text: 'Points de détraquage mental par date',
+          text: 'Points de détraquage mental par intervalle',
         },
         tooltip: {
           trigger: 'axis',
         },
         xAxis: {
           type: 'category',
-          data: Object.keys(pointsByDay),
+          data: Object.keys(groupedPoints),
         },
         yAxis: {
           type: 'value',
@@ -44,13 +68,13 @@ const ProfilePage = () => {
           {
             name: 'Points de détraquage mental',
             type: 'line',
-            data: Object.values(pointsByDay),
+            data: Object.values(groupedPoints),
           },
         ],
       };
       chart.setOption(option);
     }
-  }, [pointsByDay]);
+  }, [groupedPoints]);
 
   const indexOfLastSmash = currentPage * smashesPerPage;
   const indexOfFirstSmash = indexOfLastSmash - smashesPerPage;
@@ -86,6 +110,19 @@ const ProfilePage = () => {
       )}
       <div className="bg-white shadow-md rounded p-4 mb-6">
         <h2 className="text-2xl font-bold mb-4">Statistiques de Smashing</h2>
+        <div className="mb-4">
+          <label htmlFor="timeInterval" className="mr-2">Intervalle de temps:</label>
+          <select
+            id="timeInterval"
+            value={timeInterval}
+            onChange={(e) => setTimeInterval(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="date">Date</option>
+            <option value="hour">Heure</option>
+            <option value="15min">15 minutes</option>
+          </select>
+        </div>
         <div ref={chartRef} style={{ width: '100%', height: '400px' }}></div>
       </div>
       <div className="bg-white shadow-md rounded p-4">
