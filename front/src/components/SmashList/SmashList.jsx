@@ -11,12 +11,17 @@ export default function SmashList() {
     const dispatch = useDispatch();
     const { items: users, isLoading, error } = useSelector((state) => state.match);
     const user = useSelector((state) => state.auth.user);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         if (user) {
           dispatch(getRandomMatches());
         }
       }, [dispatch, user]);
+
+    useEffect(() => {
+        setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+    }, []);
 
     const [direction, setDirection] = useState(null);
 
@@ -30,7 +35,7 @@ export default function SmashList() {
     const handleAction = async (action) => {
         setDirection(action);
         if (users.length > 0 && user) {
-            const matchId = users[0]._id;
+            const matchId = users[currentIndex]._id;
             const likeData = {
                 userId: user.id,
                 matchId,
@@ -39,12 +44,20 @@ export default function SmashList() {
             dispatch(createLike(likeData));
             // Retirer la carte actuelle après l'action
             setTimeout(() => {
-                dispatch(getRandomMatches());
-                setDirection(null);
-                // Reset rotation after action
-                rotateX.set(0);
-                rotateY.set(0);
-            }, 500);
+                if (currentIndex >= 4) {
+                    dispatch(getRandomMatches());
+                    console.log('reset')
+                    setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+                }
+                else{// Incrémenter le compteur à chaque action de like ou pass
+                    setCurrentIndex((currentIndex) => currentIndex + 1); // Passer à l'élément suivant
+                    setDirection(null);
+                    // Reset rotation after action
+                    rotateX.set(0);
+                    rotateY.set(0);
+                }
+                console.log('currentIndex', currentIndex)   
+              }, 500);
         }
     };
 
@@ -148,27 +161,32 @@ export default function SmashList() {
             {/* SmashCard au centre */}
             <div className="flex items-center justify-center w-full absolute z-6 pointer-events-none">
             <AnimatePresence mode="wait">
-            {users.length > 0 && (
-                <motion.div
-                    key={users[0]._id}
-                    initial={{ scale: 0.85, opacity: 0, x: 0 }}
-                    animate={{ scale: 0.85, opacity: 1, x: 0 }}
-                    exit={{ opacity: 0}}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="relative z-0 pointer-events-auto"
-                    style={{ rotate: rotate }}
-                    drag="x"
-                    dragConstraints={false}
-                    dragElastic={0.2}
-                    onDrag={(e, info) => {
-                        rotateX.set(info.offset.y / 2);
-                        rotateY.set(info.offset.x / 2);
-                    }}
-                    onDragEnd={handleDragEnd}
-                >
-                    <SmashCard {...users[0]} />
-                </motion.div>
-            )}
+                {users.length > 0 && currentIndex < users.length && (
+                    <motion.div
+                        key={users[currentIndex]._id}
+                        initial={{ scale: 0.85, opacity: 0, x: 0 }}
+                        animate={{ scale: 0.85, opacity: 1, x: 0 }}
+                        exit={{
+                            opacity: 0,
+                            x: direction === 'smash' ? 300 : direction === 'pass' ? -300 : 0, // Déplace vers la droite (smash) ou gauche (pass)
+                            rotate: direction === 'smash' ? 15 : direction === 'pass' ? -15 : 0, // Ajoute une légère rotation
+                            transition: { duration: 0.5, ease: "easeInOut" } // Transition fluide
+                        }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="relative z-0 pointer-events-auto"
+                        style={{ rotate: rotate }}
+                        drag="x"
+                        dragConstraints={false}
+                        dragElastic={0.2}
+                        onDrag={(e, info) => {
+                            rotateX.set(info.offset.y / 2);
+                            rotateY.set(info.offset.x / 2);
+                        }}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SmashCard {...users[currentIndex]} />
+                    </motion.div>
+                )}
             </AnimatePresence>
             </div>
 

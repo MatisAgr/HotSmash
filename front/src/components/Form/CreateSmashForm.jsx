@@ -28,40 +28,49 @@ const CreateSmashForm = () => {
         }
     }, [isLoading, error, items]);
 
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                setSuccessMessage('');
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name) {
-            setFormError('Name is required');
+            setFormError('Le nom est requis');
             setSuccessMessage('');
             return;
         }
         if (!age) {
-            setFormError('Age is required');
+            setFormError('L\'âge est requis');
             setSuccessMessage('');
             return;
         }
         if (!sex) {
-            setFormError('Gender is required');
+            setFormError('Le genre est requis');
             setSuccessMessage('');
             return;
         }
         if (sex === 'Autre' && !customSex) {
-            setFormError('Please specify your gender');
+            setFormError('Veuillez spécifier votre genre');
             setSuccessMessage('');
             return;
         }
         if (!points) {
-            setFormError('Points are required');
+            setFormError('Les points sont requis');
             setSuccessMessage('');
             return;
         }
         if (points < 0 || points > 1000) {
-            setFormError('Points must be between 0 and 1000');
+            setFormError('Les points doivent être entre 0 et 1000');
             setSuccessMessage('');
             return;
         }
         if (!urlImg) {
-            setFormError('Image URL is required');
+            setFormError('L\'URL de l\'image est requise');
             setSuccessMessage('');
             return;
         }
@@ -78,8 +87,18 @@ const CreateSmashForm = () => {
         dispatch(createMatch(matchData));
     };
 
+    const handleChangePoints = (e) => {
+        let value = parseInt(e.target.value, 10);
+        if (value > 1000) {
+            value = 1000;
+        } else if (value < 0) {
+            value = 0;
+        }
+        setPoints(value);
+    };
+
     return (
-        <div className="relative flex flex-col md:flex-row items-center justify-center min-h-screen">
+        <div className="relative flex flex-col md:flex-row items-center justify-center min-h-screen w-full">
             {isLoading && (
                 <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
                     <div className="text-white text-2xl">Chargement...</div>
@@ -90,7 +109,7 @@ const CreateSmashForm = () => {
                 <div className="absolute w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
                 <div className="absolute w-72 h-72 bg-red-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
             </div>
-            <form className="relative p-10 bg-black bg-opacity-80 rounded-3xl shadow-lg overflow-y-auto z-10" onSubmit={handleSubmit}>
+            <form className="relative p-10 bg-black bg-opacity-80 rounded-3xl shadow-lg overflow-y-auto w-full max-w-md md:max-w-lg lg:max-w-xl" onSubmit={handleSubmit}>
                 <h2 className="text-2xl font-bold mb-6 text-white">Créer un Smash</h2>
                 <label className="block text-lg mb-2 text-white">Nom:</label>
                 <input
@@ -136,7 +155,9 @@ const CreateSmashForm = () => {
                     type="number"
                     value={points}
                     placeholder='0 - 1000'
-                    onChange={(e) => setPoints(e.target.value)}
+                    min="0"
+                    max="1000"
+                    onChange={handleChangePoints}
                 />
 
                 <label className="block text-lg mb-2 text-white">URL de l'image:</label>
@@ -147,7 +168,7 @@ const CreateSmashForm = () => {
                     onChange={(e) => setUrlImg(e.target.value)}
                 />
 
-                <button className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300" type="submit" disabled={isLoading}>
+                <button className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300 w-full" type="submit" disabled={isLoading}>
                     {isLoading ? 'Création en cours...' : 'Créer un Smash'}
                 </button>
 
@@ -169,12 +190,12 @@ const CreateSmashForm = () => {
                     </div>
                 )}
             </form>
-            <div className="p-5 w-full md:w-1/2 flex items-center justify-center z-10">
+            <div className="p-5 w-full md:w-1/2 flex items-center justify-center">
                 <SmashCard
                     name={name || '[Nom]'}
                     age={age || '[Âge]'}
-                    gender={sex === '[Autre]' ? customSex : sex || '[Genre]'}
-                    url_img={urlImg || 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1200px-No-Image-Placeholder.svg.png'}
+                    gender={sex === 'Autre' ? customSex : sex || '[Genre]'}
+                    url_img={urlImg || 'https://static.wikia.nocookie.net/disney/images/8/89/Profile_-_Kim_Possible.png/revision/latest?cb=20190312090023'}
                 />
             </div>
         </div>
