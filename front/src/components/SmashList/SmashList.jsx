@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import SmashCard from '../Card/SmashCard';
+import { NAME_APP } from '../../constants/NameApp';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { getRandomMatches } from '../../redux/slices/matchSlice';
@@ -89,11 +90,11 @@ export default function SmashList() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-white select-none relative">
+        <div className="flex items-center justify-center min-h-screen bg-white select-none relative bg-gradient-to-r from-blue-500 via-pink-500 to-red-500">
             <div className="flex items-center justify-between w-full relative z-5">
                 {/* Zone PASS à gauche */}
                 <motion.div
-                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-r from-red-900 via-red-700 to-red-500 flex items-center justify-center cursor-pointer p-4 relative"
+                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 flex items-center justify-center cursor-pointer p-4 relative"
                     onClick={() => handleAction('pass')}
                     onMouseMove={(e) => handleMouseMove(e, 'pass')}
                     onMouseLeave={handleMouseLeave}
@@ -119,7 +120,7 @@ export default function SmashList() {
 
                 {/* Zone SMASH à droite */}
                 <motion.div
-                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 bg-gradient-to-l from-lime-600 via-lime-500 to-lime-200 flex items-center justify-center cursor-pointer p-4 relative"
+                    className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 flex items-center justify-center cursor-pointer p-4 relative"
                     onClick={() => handleAction('smash')}
                     onMouseMove={(e) => handleMouseMove(e, 'smash')}
                     onMouseLeave={handleMouseLeave}
@@ -172,7 +173,13 @@ export default function SmashList() {
             </div>
 
             {users.length === 0 && (
-                <p className="absolute bottom-10 text-xl text-gray-300 select-none">Aucune carte disponible</p>
+                <div className="absolute bottom-10 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white text-xl py-4 px-6 rounded-3xl shadow-lg select-none text-center">
+                    <div className='text-4xl mb-2'> 
+                        🤯
+                    </div>
+                    <div className='text-2xl font-bold'>Aucune carte disponible</div>
+                    <div className='text-lg mt-2'>Vous avez fini {NAME_APP}</div>
+                </div>
             )}
         </div>
     );
