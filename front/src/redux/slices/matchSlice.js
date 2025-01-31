@@ -13,30 +13,6 @@ export const getRandomMatches = createAsyncThunk(
   }
 );
 
-export const passMatch = createAsyncThunk(
-  'matchs/passMatch',
-  async ({ userId, matchId }, { rejectWithValue }) => {
-    try {
-      const response = await MyAxios.post('/match/pass', { userId, matchId });
-      return { matchId };
-    } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
-    }
-  }
-);
-
-export const smashMatch = createAsyncThunk(
-  'matchs/smashMatch',
-  async ({ userId, matchId }, { rejectWithValue }) => {
-    try {
-      const response = await MyAxios.post('/match/smash', { userId, matchId });
-      return { matchId };
-    } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
-    }
-  }
-);
-
 export const createMatch = createAsyncThunk(
   'matchs/createMatch',
   async (matchData, { rejectWithValue }) => {
@@ -56,17 +32,26 @@ const matchsSlice = createSlice({
     isLoading: false,
     error: null,
     currentPage: 0,
+    actionCount: 0, // Compteur pour suivre le nombre de matchs likés ou passés
   },
   reducers: {
     resetMatch: (state) => {
       state.items = [];
       state.currentPage = 0;
+      state.actionCount = 0; // Réinitialiser le compteur
     },
     nextPage: (state) => {
       state.currentPage += 1;
     },
     previousPage: (state) => {
       state.currentPage -= 1;
+    },
+    incrementActionCount: (state) => {
+      state.actionCount += 1;
+      if (state.actionCount >= 5) {
+        state.actionCount = 0;
+        state.items = [];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -82,15 +67,9 @@ const matchsSlice = createSlice({
       .addCase(getRandomMatches.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-      })
-      .addCase(passMatch.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item._id !== action.payload.matchId);
-      })
-      .addCase(smashMatch.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item._id !== action.payload.matchId);
       });
   },
 });
 
-export const { resetMatch, nextPage, previousPage } = matchsSlice.actions;
+export const { resetMatch, nextPage, previousPage, incrementActionCount } = matchsSlice.actions;
 export default matchsSlice.reducer;
