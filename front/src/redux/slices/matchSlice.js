@@ -32,13 +32,13 @@ const matchsSlice = createSlice({
     isLoading: false,
     error: null,
     currentPage: 0,
-    actionCount: 0, // Compteur pour suivre le nombre de matchs likés ou passés
+    actionCount: 0,
   },
   reducers: {
     resetMatch: (state) => {
       state.items = [];
       state.currentPage = 0;
-      state.actionCount = 0; // Réinitialiser le compteur
+      state.actionCount = 0;
     },
     nextPage: (state) => {
       state.currentPage += 1;
