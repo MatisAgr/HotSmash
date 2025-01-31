@@ -5,7 +5,7 @@ import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 
 import Navbar from "./components/Navbar/Navbar";
-import FooterComponent from "./components/Footer/Footer";
+// import FooterComponent from "./components/Footer/Footer";
 
 import Home from "./pages/Home/Home";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";

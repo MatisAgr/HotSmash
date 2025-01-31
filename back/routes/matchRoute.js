@@ -11,8 +11,5 @@ router.get('/:id', auth.authHeader, controllerMatch.getMatchProfile);
 router.put('/:id', auth.isAdmin, controllerMatch.updateMatchProfile);
 router.delete('/:id', auth.isAdmin, controllerMatch.deleteMatchProfile);
 
-// Routes for pass and smash actions
-router.post('/pass', auth.authHeader, controllerMatch.passMatch);
-router.post('/smash', auth.authHeader, controllerMatch.smashMatch);
 
 module.exports = router;

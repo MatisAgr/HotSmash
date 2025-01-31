@@ -11,4 +11,8 @@ router.get('/:matchId', auth.authHeader, controllerLike.getLikesByMatchId);
 router.delete('/:id', auth.authHeader, controllerLike.deleteLike);
 
 
+// // Routes for pass and smash actions
+// router.post('/pass', auth.authHeader, controllerLike.passMatch);
+// router.post('/smash', auth.authHeader, controllerLike.smashMatch);
+
 module.exports = router;
