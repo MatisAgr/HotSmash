@@ -60,7 +60,20 @@ exports.getAllMatches = async (req, res) => {
 
 exports.getRandomMatches = async (req, res) => {
     try {
-        const matches = await Match.aggregate([{ $sample: { size: 5 } }]);
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.userId;
+
+        // Obtenir les IDs des matchs déjà likés par l'utilisateur
+        const likedMatches = await Like.find({ userId: userId }).select('matchId');
+        const likedMatchIds = likedMatches.map(like => like.matchId);
+
+        // Exclure les matchs déjà likés
+        const matches = await Match.aggregate([
+            { $match: { _id: { $nin: likedMatchIds } } },
+            { $sample: { size: 5 } }
+        ]);
+
         res.status(200).json(matches);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -122,5 +135,24 @@ exports.smashMatch = async (req, res) => {
         res.status(201).json(newLike);
     } catch (error) {
         res.status(400).json({ message: error.message });
+    }
+};
+
+exports.getMatchSmash = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.userId;
+
+        const likes = await Like.find({ userId: userId, type: 2 });
+        const matchIds = likes.map(like => like.matchId);
+
+        const matches = await Match.find({ _id: { $in: matchIds } });
+
+        console.log('Matches:', matches);
+        res.status(200).json(matches);
+    } catch (error) {
+        console.error('Error in getMatchSmash:', error);
+        res.status(500).json({ message: error.message });
     }
 };
