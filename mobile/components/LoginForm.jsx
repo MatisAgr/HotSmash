@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slices/authSlice';
-import { initiateWebSocket } from '../../redux/slices/onlineUsersSlice'; // Ajout
+import { loginUser } from '../redux/slices/authSlice';
+import { initiateWebSocket } from '../redux/slices/onlineUsersSlice'; // Ajout
 import { useNavigate } from "react-router-dom";
 
 import Input from '../Inputs/Input';

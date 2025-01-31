@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ConnectedUserCard from '../../components/Card/ConnectedUserCard';
-import SearchBar from '../../components/SearchBar/SearchBar';
+import { View, Text, FlatList } from 'react-native';
+import ConnectedUserCard from '../components/ConnectedUserCard';
+import SearchBar from '../components/SearchBar';
 
 export default function ConnectedUsers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,19 +13,21 @@ export default function ConnectedUsers() {
   );
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl text-white font-bold mb-4">Utilisateurs Connectés</h1>
+    <View className="p-4">
+      <Text className="text-2xl text-white font-bold mb-4">Utilisateurs Connectés</Text>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <div className="grid grid-cols-1 gap-4">
-        {filteredUsers.map(user => (
+      <FlatList
+        data={filteredUsers}
+        keyExtractor={(user) => user.id.toString()}
+        renderItem={({ item }) => (
           <ConnectedUserCard
-            key={user.id}
-            username={user.username}
-            points={user.points}
-            smashesToDo={user.smashesToDo}
+            username={item.username}
+            points={item.points}
+            smashesToDo={item.smashesToDo}
           />
-        ))}
-      </div>
-    </div>
+        )}
+        contentContainerStyle={{ gap: 16 }}
+      />
+    </View>
   );
 }
