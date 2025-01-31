@@ -8,7 +8,7 @@ export const getRandomMatches = createAsyncThunk(
       const response = await MyAxios.get('/match/allRandom');
       return response.data;
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue' });
     }
   }
 );
@@ -20,7 +20,7 @@ export const passMatch = createAsyncThunk(
       const response = await MyAxios.post('/match/pass', { userId, matchId });
       return { matchId };
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue' });
     }
   }
 );
@@ -32,7 +32,7 @@ export const smashMatch = createAsyncThunk(
       const response = await MyAxios.post('/match/smash', { userId, matchId });
       return { matchId };
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue' });
     }
   }
 );
@@ -44,7 +44,7 @@ export const createMatch = createAsyncThunk(
       const response = await MyAxios.post('/match', matchData);
       return response.data;
     } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || 'Erreur inconnue' });
+      return rejectWithValue({ message: error.response?.data?.error || 'Erreur inconnue', status: error.response?.status });
     }
   }
 );
@@ -83,11 +83,17 @@ const matchsSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      .addCase(passMatch.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item._id !== action.payload.matchId);
+      .addCase(createMatch.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
       })
-      .addCase(smashMatch.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item._id !== action.payload.matchId);
+      .addCase(createMatch.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(createMatch.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });
