@@ -7,7 +7,6 @@ const MyAxios = axios.create({
     headers: { 'X-Custom-Header': 'foobar' }
 });
 
-// Request interceptor
 MyAxios.interceptors.request.use(
     (config) => {
       const token = Cookies.get('authToken');
@@ -22,15 +21,12 @@ MyAxios.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Response interceptor
 MyAxios.interceptors.response.use(
     response => {
-        // Faire quelque chose avec les données de réponse
         console.log('Réponse reçue:', response);
         return response;
     },
     error => {
-        // Faire quelque chose avec l'erreur de réponse
         console.log('Erreur de réponse:', error);
         return Promise.reject(error);
     }
