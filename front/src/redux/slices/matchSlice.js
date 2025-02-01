@@ -24,7 +24,6 @@ export const createMatch = createAsyncThunk(
     }
   }
 );
- 
 const matchsSlice = createSlice({
   name: 'match',
   initialState: {
