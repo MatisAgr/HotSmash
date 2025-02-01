@@ -6,12 +6,16 @@ import { getRandomMatches } from '../redux/slices/matchSlice';
 import { createLike } from '../redux/slices/smashSlice';
 import SmashCard from '../components/SmashCard';
 import { NAME_APP } from '../constants/NameApp';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
 export default function SmashList() {
     const dispatch = useDispatch();
     const { items: users, isLoading, error } = useSelector((state) => state.match);
     const user = useSelector((state) => state.auth.user);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [cooldown, setCooldown] = useState(false);
+
+    const translateX = useSharedValue(0);
 
     useEffect(() => {
         if (user) {
@@ -24,6 +28,8 @@ export default function SmashList() {
     }, [users]);
 
     const handleAction = (action) => {
+        if (cooldown) return; // Si en cooldown, ne rien faire
+
         if (users.length > 0 && user) {
             const matchId = users[currentIndex]._id;
             const likeData = {
@@ -32,17 +38,28 @@ export default function SmashList() {
                 type: action === 'pass' ? 2 : 1, // 2 pour pass, 1 pour smash
             };
             dispatch(createLike(likeData));
-            // Passer à la carte suivante ou récupérer de nouveaux matchs
-            setTimeout(() => {
-                if (currentIndex >= 4) {
+            setCooldown(true); // Activer le cooldown
+            setTimeout(() => setCooldown(false), 1000); // Désactiver le cooldown après 1 seconde
+
+            // Animation de la carte
+            translateX.value = withTiming(action === 'pass' ? -500 : 500, { duration: 500 }, () => {
+                translateX.value = 0;
+                // Passer à la carte suivante ou récupérer de nouveaux matchs
+                if (currentIndex >= users.length - 1) {
                     dispatch(getRandomMatches());
                     setCurrentIndex(0);
                 } else {
                     setCurrentIndex((i) => i + 1);
                 }
-            }, 500);
+            });
         }
     };
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: translateX.value }],
+        };
+    });
 
     // Affichage d'un indicateur de chargement si les données sont en cours de chargement
     if (isLoading) {
@@ -67,11 +84,11 @@ export default function SmashList() {
         >
             <View style={styles.buttonContainer}>
                 {/* Zone PASS à gauche */}
-                <TouchableOpacity style={styles.halfButton} onPress={() => handleAction('pass')}>
+                <TouchableOpacity style={[styles.halfButton, cooldown && styles.disabledButton]} onPress={() => handleAction('pass')} disabled={cooldown}>
                     <Text style={styles.buttonText}>PASS</Text>
                 </TouchableOpacity>
                 {/* Zone SMASH à droite */}
-                <TouchableOpacity style={styles.halfButton} onPress={() => handleAction('smash')}>
+                <TouchableOpacity style={[styles.halfButton, cooldown && styles.disabledButton]} onPress={() => handleAction('smash')} disabled={cooldown}>
                     <Text style={styles.buttonText}>SMASH</Text>
                 </TouchableOpacity>
             </View>
@@ -79,7 +96,9 @@ export default function SmashList() {
             {/* Carte au centre */}
             <View style={styles.cardContainer}>
                 {users.length > 0 && currentIndex < users.length && (
-                    <SmashCard {...users[currentIndex]} />
+                    <Animated.View style={[styles.animatedCard, animatedStyle]}>
+                        <SmashCard {...users[currentIndex]} />
+                    </Animated.View>
                 )}
             </View>
 
@@ -89,9 +108,9 @@ export default function SmashList() {
                     <Text style={styles.noCardEmoji}>🤯</Text>
                     <Text style={styles.noCardTitle}>Aucune carte disponible</Text>
                     <Text style={styles.noCardMessage}>Vous avez fini {NAME_APP}</Text>
-                    <br />
-                    <Text style={styles.noCardMessage}>Si c'est un bug, il faut changer de page et revenir</Text>
-                    <Text style={styles.noCardMessage}>C'est en TODO</Text>
+                    <TouchableOpacity style={styles.reloadButton} onPress={() => dispatch(getRandomMatches())}>
+                        <Text style={styles.reloadButtonText}>Recharger</Text>
+                    </TouchableOpacity>
                 </View>
             )}
         </LinearGradient>
@@ -131,6 +150,11 @@ const styles = StyleSheet.create({
         zIndex: 6,
         pointerEvents: 'none',
     },
+    animatedCard: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     noCardContainer: {
         position: 'absolute',
         alignSelf: 'center',
@@ -160,5 +184,21 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#FFF',
         textAlign: 'center',
+    },
+    reloadButton: {
+        marginTop: 16,
+        backgroundColor: '#3B82F6',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },
+    reloadButtonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    disabledButton: {
+        opacity: 0.5,
     },
 });
