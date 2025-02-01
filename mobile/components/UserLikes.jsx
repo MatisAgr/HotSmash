@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLikesByUserId } from '../../redux/slices/smashSlice';
 
@@ -15,23 +16,52 @@ const UserLikes = () => {
     }, [dispatch, user]);
 
     if (likesStatus === 'loading') {
-        return <p>Loading likes...</p>;
+        return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
     return (
-        <div className="mt-4">
-            <h2 className="text-xl font-bold mb-2">User Likes</h2>
+        <View style={styles.container}>
+            <Text style={styles.title}>User Likes</Text>
             {likes.length > 0 ? (
-                <ul className="list-disc list-inside">
-                    {likes.map((like) => (
-                        <li key={like.id}>{like.matchId}</li>
-                    ))}
-                </ul>
+                <FlatList
+                    data={likes}
+                    renderItem={({ item }) => (
+                        <Text style={styles.likeItem} key={item.id}>{item.matchId}</Text>
+                    )}
+                    keyExtractor={(item) => item.id.toString()}
+                />
             ) : (
-                <p>No likes found.</p>
+                <Text style={styles.noLikes}>No likes found.</Text>
             )}
-        </div>
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        marginTop: 16,
+        padding: 16,
+        backgroundColor: '#FFF',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    likeItem: {
+        fontSize: 16,
+        marginBottom: 4,
+    },
+    noLikes: {
+        fontSize: 16,
+        color: '#888',
+    },
+});
 
 export default UserLikes;

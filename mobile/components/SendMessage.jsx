@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
 const SendMessage = () => {
     const [message, setMessage] = useState('');
@@ -32,8 +33,7 @@ const SendMessage = () => {
         };
     }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (socket && message) {
             socket.send(message);
             setMessage('');
@@ -41,36 +41,86 @@ const SendMessage = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-5 bg-white rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold mb-5 text-center">WS Messages</h1>
-            <form onSubmit={handleSubmit} className="mb-5">
-                <input
-                    type="text"
+        <View style={styles.container}>
+            <Text style={styles.title}>WS Messages</Text>
+            <View style={styles.form}>
+                <TextInput
+                    style={styles.input}
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChangeText={setMessage}
                     placeholder="Type your message"
-                    required
-                    className="w-full p-2 border border-gray-300 rounded mb-3"
+                    placeholderTextColor="#888"
                 />
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200"
-                >
-                    Send
-                </button>
-            </form>
-            <div>
-                <h2 className="text-xl font-semibold mb-3">Messages</h2>
-                <ul className="space-y-2">
-                    {messages.map((msg, index) => (
-                        <li key={index} className="p-2 bg-gray-100 rounded border border-gray-200">
-                            {msg}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </div>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Send</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.messagesContainer}>
+                <Text style={styles.subtitle}>Messages</Text>
+                <FlatList
+                    data={messages}
+                    renderItem={({ item }) => (
+                        <View style={styles.messageItem}>
+                            <Text>{item}</Text>
+                        </View>
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+            </View>
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#FFF',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    form: {
+        marginBottom: 20,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+        backgroundColor: '#FFF',
+    },
+    button: {
+        backgroundColor: '#3B82F6',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 18,
+    },
+    messagesContainer: {
+        flex: 1,
+    },
+    subtitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    messageItem: {
+        padding: 10,
+        backgroundColor: '#F3F4F6',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        marginBottom: 5,
+    },
+});
 
 export default SendMessage;

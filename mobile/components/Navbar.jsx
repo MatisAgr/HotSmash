@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import { NAME_APP } from '../constants/NameApp';
@@ -18,64 +18,63 @@ export default function Navbar() {
   };
 
   return (
-    <View className="bg-black">
-      <View className="container mx-auto flex justify-between items-center">
-        <View className="text-white text-lg font-bold">
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} className="flex items-center text-white">
-            <Text>{NAME_APP}</Text>
+    <View style={styles.navbar}>
+      <View style={styles.container}>
+        <View style={styles.brand}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.brandLink}>
+            <Text style={styles.brandText}>{NAME_APP}</Text>
           </TouchableOpacity>
         </View>
-        <View className="flex items-center">
+        <View style={styles.links}>
           {isAuthenticated ? (
             <>
               <TouchableOpacity
                 onPress={() => navigation.navigate('CreateSmash')}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                style={styles.link}
               >
-                <FaUser className="mr-1" />
-                <Text>Créer Smasher</Text>
+                <FaUser style={styles.icon} />
+                <Text style={styles.linkText}>Créer Smasher</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ConnectedUsers')}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                style={styles.link}
               >
-                <FaUser className="mr-1" />
-                <Text>Utilisateurs</Text>
+                <FaUser style={styles.icon} />
+                <Text style={styles.linkText}>Utilisateurs</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Profile')}
-                className="text-gray-300 hover:bg-gray-700 px-3 py-3 flex items-center"
+                style={styles.link}
               >
                 <Image
                   source={{ uri: 'https://www.francetvinfo.fr/pictures/KI83JKIWxYVA8ng-cUtYxM6l-z8/1200x1200/2016/08/23/shrek-5.jpg' }}
                   alt="Profile"
-                  className="rounded-full"
-                  style={{ width: 40, height: 40 }}
+                  style={styles.profileImage}
                 />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleLogout}
-                className="bg-red-500 text-white  px-5 py-5 flex items-center"
+                style={[styles.link, styles.logout]}
               >
-                <FaSignOutAlt className="mr-1" />
-                <Text>Logout</Text>
+                <FaSignOutAlt style={styles.icon} />
+                <Text style={styles.linkText}>Logout</Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Login')}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                style={styles.link}
               >
-                <FaSignInAlt className="mr-1" />
-                <Text>Login</Text>
+                <FaSignInAlt style={styles.icon} />
+                <Text style={styles.linkText}>Login</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('Register')}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white  px-5 py-5 flex items-center"
+                style={styles.link}
               >
-                <FaUserPlus className="mr-1" />
-                <Text>Register</Text>
+                <FaUserPlus style={styles.icon} />
+                <Text style={styles.linkText}>Register</Text>
               </TouchableOpacity>
             </>
           )}
@@ -84,3 +83,55 @@ export default function Navbar() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  navbar: {
+    backgroundColor: 'black',
+    padding: 10,
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  brand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  brandLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  brandText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  links: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  link: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginHorizontal: 5,
+  },
+  linkText: {
+    color: 'gray',
+    marginLeft: 5,
+  },
+  icon: {
+    color: 'gray',
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  logout: {
+    backgroundColor: 'red',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+});

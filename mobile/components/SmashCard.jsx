@@ -1,51 +1,135 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 export default function SmashCard({ name, age, gender, url_img, points, type, date, size = 'normal' }) {
   const isSmall = size === 'small';
   const formattedDate = date ? new Date(date).toLocaleString() : null;
 
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: withSpring(1) }],
+    };
+  });
+
   return (
-    <motion.div
-      className={`${
-        isSmall ? 'w-48 sm:w-56 md:w-64 lg:w-72' : 'w-80 sm:w-96 md:w-[28rem] lg:w-[32rem]'
-      } bg-white shadow-2xl rounded-3xl overflow-hidden relative select-none`}
-      whileHover={{ scale: 1.05 }}
-      tabIndex={0}
-      onFocus={(e) => e.target.blur()}
+    <Animated.View
+      style={[styles.card, isSmall ? styles.smallCard : styles.largeCard, animatedStyle]}
+      onTouchStart={() => {
+        animatedStyle.transform = [{ scale: withSpring(1.05) }];
+      }}
+      onTouchEnd={() => {
+        animatedStyle.transform = [{ scale: withSpring(1) }];
+      }}
     >
       {formattedDate && (
-        <div className={`absolute top-4 left-4 font-bold py-1 px-3 rounded-lg bg-blue-600 text-white`}>
-          {formattedDate}
-        </div>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateText}>{formattedDate}</Text>
+        </View>
       )}
-      <img
-        className={`${
-          isSmall ? 'h-48 sm:h-56 md:h-64 lg:h-72' : 'h-96 sm:h-[28rem] md:h-[32rem] lg:h-[36rem]'
-        } w-full object-cover object-center select-none user-select-none`}
-        src={url_img}
+      <Image
+        style={[styles.image, isSmall ? styles.smallImage : styles.largeImage]}
+        source={{ uri: url_img }}
         alt={name}
-        draggable="false"
       />
-      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4 select-none">
-        <h2 className={`${
-          isSmall ? 'text-lg sm:text-xl md:text-2xl' : 'text-2xl sm:text-3xl md:text-4xl'
-        } font-bold text-white select-none user-select-none`}>
+      <View style={styles.infoContainer}>
+        <Text style={[styles.name, isSmall ? styles.smallText : styles.largeText]}>
           {name}, {age} ans
-        </h2>
-        <p className={`${
-          isSmall ? 'text-md sm:text-lg md:text-xl' : 'text-lg sm:text-xl md:text-2xl'
-        } text-white mt-2 select-none user-select-none`}>
+        </Text>
+        <Text style={[styles.gender, isSmall ? styles.smallText : styles.largeText]}>
           {gender}
-        </p>
+        </Text>
         {points !== undefined && (
-          <div className={`absolute bottom-4 right-4 font-bold py-1 px-3 rounded-lg ${
-            type === 1 ? 'bg-red-600' : 'bg-lime-700'
-          } text-white`}>
-            {type === 1 ? `+${points}` : `-${points}`} points
-          </div>
+          <View style={[styles.pointsContainer, type === 1 ? styles.positivePoints : styles.negativePoints]}>
+            <Text style={styles.pointsText}>
+              {type === 1 ? `+${points}` : `-${points}`} points
+            </Text>
+          </View>
         )}
-      </div>
-    </motion.div>
+      </View>
+    </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    borderRadius: 15,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  smallCard: {
+    width: 200,
+  },
+  largeCard: {
+    width: 320,
+  },
+  dateContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: '#3B82F6',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  dateText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  image: {
+    width: '100%',
+    resizeMode: 'cover',
+  },
+  smallImage: {
+    height: 200,
+  },
+  largeImage: {
+    height: 320,
+  },
+  infoContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  name: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  gender: {
+    color: 'white',
+    marginTop: 5,
+  },
+  smallText: {
+    fontSize: 16,
+  },
+  largeText: {
+    fontSize: 24,
+  },
+  pointsContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  positivePoints: {
+    backgroundColor: '#EF4444',
+  },
+  negativePoints: {
+    backgroundColor: '#10B981',
+  },
+  pointsText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});

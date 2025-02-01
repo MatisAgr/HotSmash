@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRandomMatches } from '../redux/slices/matchSlice';
 import { createLike } from '../redux/slices/smashSlice';
 import SmashCard from '../components/SmashCard';
 import { NAME_APP } from '../constants/NameApp';
-import { TailwindProvider } from 'tailwindcss-react-native';
 
 export default function SmashList() {
     const dispatch = useDispatch();
@@ -20,70 +20,127 @@ export default function SmashList() {
     }, [dispatch, user]);
 
     useEffect(() => {
-        setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+        setCurrentIndex(0); // Réinitialiser l'index après récupération
     }, []);
 
-    const handleAction = async (action) => {
+    const handleAction = (action) => {
         if (users.length > 0 && user) {
             const matchId = users[currentIndex]._id;
             const likeData = {
                 userId: user.id,
                 matchId,
-                type: action === 'pass' ? 2 : 1 // Type 2 for pass, 1 for smash
+                type: action === 'pass' ? 2 : 1, // 2 pour pass, 1 pour smash
             };
             dispatch(createLike(likeData));
-            // Retirer la carte actuelle après l'action
+            // Passer à la carte suivante ou récupérer de nouveaux matchs
             setTimeout(() => {
                 if (currentIndex >= 4) {
                     dispatch(getRandomMatches());
-                    setCurrentIndex(0); // Réinitialiser l'index après avoir récupéré de nouveaux matchs
+                    setCurrentIndex(0);
                 } else {
-                    setCurrentIndex((currentIndex) => currentIndex + 1); // Passer à l'élément suivant
+                    setCurrentIndex((i) => i + 1);
                 }
             }, 500);
         }
     };
 
     return (
-        <TailwindProvider>
-            <View className="flex items-center justify-center min-h-screen bg-white select-none relative bg-gradient-to-r from-blue-500 via-pink-500 to-red-500">
-                <View className="flex items-center justify-between w-full relative z-5">
-                    {/* Zone PASS à gauche */}
-                    <TouchableOpacity
-                        className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 flex items-center justify-center cursor-pointer p-4 relative"
-                        onPress={() => handleAction('pass')}
-                    >
-                        <Text className="text-white text-6xl font-extrabold drop-shadow-lg">
-                            PASS
-                        </Text>
-                    </TouchableOpacity>
+        <LinearGradient 
+            colors={['#3B82F6', '#EC4899', '#EF4444']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.container}
+        >
+            <View style={styles.buttonContainer}>
+                {/* Zone PASS à gauche */}
+                <TouchableOpacity style={styles.halfButton} onPress={() => handleAction('pass')}>
+                    <Text style={styles.buttonText}>PASS</Text>
+                </TouchableOpacity>
+                {/* Zone SMASH à droite */}
+                <TouchableOpacity style={styles.halfButton} onPress={() => handleAction('smash')}>
+                    <Text style={styles.buttonText}>SMASH</Text>
+                </TouchableOpacity>
+            </View>
 
-                    {/* Zone SMASH à droite */}
-                    <TouchableOpacity
-                        className="h-full sm:h-[50rem] md:h-[54rem] lg:h-[58rem] w-1/2 flex items-center justify-center cursor-pointer p-4 relative"
-                        onPress={() => handleAction('smash')}
-                    >
-                        <Text className="text-white text-6xl font-extrabold drop-shadow-lg">
-                            SMASH
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* SmashCard au centre */}
-                <View className="flex items-center justify-center w-full absolute z-6 pointer-events-none">
-                    {users.length > 0 && currentIndex < users.length && (
-                        <SmashCard {...users[currentIndex]} />
-                    )}
-                </View>
-
-                {users.length === 0 && (
-                    <View className="absolute bottom-10 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white text-xl py-4 px-6 rounded-3xl shadow-lg select-none text-center">
-                        <Text className='text-4xl mb-2'>🤯</Text>
-                        <Text className='text-2xl font-bold'>Aucune carte disponible</Text>
-                        <Text className='text-lg mt-2'>Vous avez fini {NAME_APP}</Text>
-                    </View>
+            {/* Carte au centre */}
+            <View style={styles.cardContainer}>
+                {users.length > 0 && currentIndex < users.length && (
+                    <SmashCard {...users[currentIndex]} />
                 )}
             </View>
-        </TailwindProvider>
+
+            {/* Message quand aucune carte n'est disponible */}
+            {users.length === 0 && (
+                <View style={styles.noCardContainer}>
+                    <Text style={styles.noCardEmoji}>🤯</Text>
+                    <Text style={styles.noCardTitle}>Aucune carte disponible</Text>
+                    <Text style={styles.noCardMessage}>Vous avez fini {NAME_APP}</Text>
+                </View>
+            )}
+        </LinearGradient>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        zIndex: 5,
+    },
+    halfButton: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 50,
+        fontWeight: '900',
+        textShadowColor: '#000',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 4,
+    },
+    cardContainer: {
+        position: 'absolute',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 6,
+        pointerEvents: 'none',
+    },
+    noCardContainer: {
+        position: 'absolute',
+        bottom: 40,
+        alignSelf: 'center',
+        backgroundColor: '#A855F7',
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+        zIndex: 10,
+    },
+    noCardEmoji: {
+        fontSize: 40,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    noCardTitle: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#FFF',
+        textAlign: 'center',
+        marginBottom: 4,
+    },
+    noCardMessage: {
+        fontSize: 20,
+        color: '#FFF',
+        textAlign: 'center',
+    },
+});

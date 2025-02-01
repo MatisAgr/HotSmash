@@ -1,21 +1,59 @@
 import React from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { FaUser } from 'react-icons/fa';
 
 export default function ListUsers() {
     const users = useSelector((state) => state.onlineUsers.users);
 
+    const renderItem = ({ item }) => (
+        <View style={styles.userItem}>
+            <FaUser style={styles.icon} />
+            <Text style={styles.username}>{item.username}</Text>
+        </View>
+    );
+
     return (
-        <div>
-            <h2 className="text-xl font-bold mb-4">Utilisateurs en ligne</h2>
-            <ul className="space-y-4">
-                {users.map(user => (
-                    <li key={user.id} className="flex items-center space-x-3">
-                        <FaUser className="w-10 h-10 text-blue-500" />
-                        <span className="text-gray-700">{user.username}</span>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <View style={styles.container}>
+            <Text style={styles.title}>Utilisateurs en ligne</Text>
+            <FlatList
+                data={users}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.list}
+            />
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#FFF',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    list: {
+        paddingBottom: 20,
+    },
+    userItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#DDD',
+    },
+    icon: {
+        fontSize: 24,
+        color: '#3B82F6',
+        marginRight: 10,
+    },
+    username: {
+        fontSize: 18,
+        color: '#333',
+    },
+});

@@ -1,20 +1,41 @@
-import React from 'react'
+import React from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 export default function Input({ type, value, onChange, placeholder, label }) {
     return (
-        <>
-            <label htmlFor='username' className='text-white text-xl text-left w-full'>
-                {label}
-            </label>
-            <input
-                type={type}
-                id={type}
-                name={type}
+        <View style={styles.container}>
+            <Text style={styles.label}>{label}</Text>
+            <TextInput
+                style={styles.input}
+                keyboardType={type === 'number' ? 'numeric' : 'default'}
                 value={value}
-                onChange={onChange}
+                onChangeText={onChange}
                 placeholder={placeholder}
-                className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                placeholderTextColor="#888"
             />
-        </>
-    )
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        marginBottom: 15,
+    },
+    label: {
+        color: 'white',
+        fontSize: 18,
+        textAlign: 'left',
+        width: '100%',
+        marginBottom: 5,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        backgroundColor: '#333',
+        color: '#FFF',
+    },
+});

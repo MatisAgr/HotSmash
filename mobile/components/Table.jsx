@@ -1,34 +1,88 @@
 import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 export default function Table({ data }) {
   if (!data || data.length === 0) {
-    return <div>Aucune donnée disponible</div>;
+    return <Text style={styles.noData}>Aucune donnée disponible</Text>;
   }
 
   const headers = Object.keys(data[0]);
 
   return (
-    <table className="min-w-full bg-white rounded-2xl overflow-hidden shadow-lg">
-      <thead>
-        <tr>
+    <ScrollView horizontal style={styles.container}>
+      <View style={styles.table}>
+        <View style={styles.tableHeader}>
           {headers.map((header) => (
-            <th key={header} className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider">
-              {header}
-            </th>
+            <View style={styles.headerCell} key={header}>
+              <Text style={styles.headerText}>{header}</Text>
+            </View>
           ))}
-        </tr>
-      </thead>
-      <tbody>
+        </View>
         {data.map((row, rowIndex) => (
-          <tr key={rowIndex} className="hover:bg-gray-100">
+          <View style={[styles.tableRow, rowIndex % 2 === 0 ? styles.evenRow : styles.oddRow]} key={rowIndex}>
             {headers.map((header) => (
-              <td key={header} className="py-2 px-4 border-b border-gray-200">
-                {row[header]}
-              </td>
+              <View style={styles.cell} key={header}>
+                <Text style={styles.cellText}>{row[header]}</Text>
+              </View>
             ))}
-          </tr>
+          </View>
         ))}
-      </tbody>
-    </table>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    margin: 10,
+  },
+  table: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#F3F4F6',
+  },
+  headerCell: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRightWidth: 1,
+    borderRightColor: '#D1D5DB',
+  },
+  headerText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#4B5563',
+    textTransform: 'uppercase',
+  },
+  tableRow: {
+    flexDirection: 'row',
+  },
+  evenRow: {
+    backgroundColor: '#FFFFFF',
+  },
+  oddRow: {
+    backgroundColor: '#F9FAFB',
+  },
+  cell: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRightWidth: 1,
+    borderRightColor: '#D1D5DB',
+    borderTopWidth: 1,
+    borderTopColor: '#D1D5DB',
+  },
+  cellText: {
+    fontSize: 12,
+    color: '#374151',
+  },
+  noData: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#374151',
+  },
+});

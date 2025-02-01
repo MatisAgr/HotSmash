@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { createMatch } from '../../redux/slices/matchSlice';
 import SmashCard from '../Card/SmashCard';
@@ -37,8 +38,7 @@ const CreateSmashForm = () => {
         }
     }, [successMessage]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (!name) {
             setFormError('Le nom est requis');
             setSuccessMessage('');
@@ -87,119 +87,141 @@ const CreateSmashForm = () => {
         dispatch(createMatch(matchData));
     };
 
-    const handleChangePoints = (e) => {
-        let value = parseInt(e.target.value, 10);
-        if (value > 1000) {
-            value = 1000;
-        } else if (value < 0) {
-            value = 0;
+    const handleChangePoints = (value) => {
+        let pointsValue = parseInt(value, 10);
+        if (pointsValue > 1000) {
+            pointsValue = 1000;
+        } else if (pointsValue < 0) {
+            pointsValue = 0;
         }
-        setPoints(value);
+        setPoints(pointsValue);
     };
 
     return (
-        <div className="relative flex flex-col md:flex-row items-center justify-center min-h-screen w-full">
+        <View style={styles.container}>
             {isLoading && (
-                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="text-white text-2xl">Chargement...</div>
-                </div>
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="#FFF" />
+                </View>
             )}
-            <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                <div className="absolute w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                <div className="absolute w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-                <div className="absolute w-72 h-72 bg-red-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-            </div>
-            <form className="relative p-10 bg-black bg-opacity-80 rounded-3xl shadow-lg overflow-y-auto w-full max-w-md md:max-w-lg lg:max-w-xl" onSubmit={handleSubmit}>
-                <h2 className="text-2xl font-bold mb-6 text-white">Créer un Smash</h2>
-                <label className="block text-lg mb-2 text-white">Nom:</label>
-                <input
-                    className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
-                    type="text"
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>Créer un Smash</Text>
+                {formError ? <Text style={styles.error}>{formError}</Text> : null}
+                {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nom"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChangeText={setName}
                 />
-
-                <label className="block text-lg mb-2 text-white">Âge:</label>
-                <input
-                    className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
-                    type="number"
+                <TextInput
+                    style={styles.input}
+                    placeholder="Âge"
                     value={age}
-                    onChange={(e) => setAge(e.target.value)}
+                    onChangeText={setAge}
+                    keyboardType="numeric"
                 />
-
-                <label className="block text-lg mb-2 text-white">Genre:</label>
-                <select
-                    className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
+                <TextInput
+                    style={styles.input}
+                    placeholder="Genre"
                     value={sex}
-                    onChange={(e) => setSex(e.target.value)}
-                >
-                    <option value="">Sélectionner le genre</option>
-                    <option value="Homme">Homme</option>
-                    <option value="Femme">Femme</option>
-                    <option value="Autre">Autre</option>
-                </select>
-
+                    onChangeText={setSex}
+                />
                 {sex === 'Autre' && (
-                    <input
-                        className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
-                        type="text"
+                    <TextInput
+                        style={styles.input}
                         placeholder="Objet, Animal, Autre..."
                         value={customSex}
-                        onChange={(e) => setCustomSex(e.target.value)}
+                        onChangeText={setCustomSex}
                     />
                 )}
-
-                <label className="block text-lg mb-2 text-white">Points de détraquage mental:</label>
-                <input
-                    className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
-                    type="number"
+                <TextInput
+                    style={styles.input}
+                    placeholder="Points de détraquage mental"
                     value={points}
-                    placeholder='0 - 1000'
-                    min="0"
-                    max="1000"
-                    onChange={handleChangePoints}
+                    onChangeText={handleChangePoints}
+                    keyboardType="numeric"
                 />
-
-                <label className="block text-lg mb-2 text-white">URL de l'image:</label>
-                <input
-                    className="w-full p-2 mb-4 border border-gray-300 rounded bg-gray-800 text-white"
-                    type="text"
+                <TextInput
+                    style={styles.input}
+                    placeholder="URL de l'image"
                     value={urlImg}
-                    onChange={(e) => setUrlImg(e.target.value)}
+                    onChangeText={setUrlImg}
                 />
-
-                <button className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300 w-full" type="submit" disabled={isLoading}>
-                    {isLoading ? 'Création en cours...' : 'Créer un Smash'}
-                </button>
-
-                {formError && (
-                    <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
-                        {formError}
-                    </div>
-                )}
-
+                <Button title="Créer un Smash" onPress={handleSubmit} disabled={isLoading} />
                 {error && (
-                    <div className="bg-red-500 text-white p-2 mt-4 rounded justify-center text-center">
+                    <Text style={styles.error}>
                         {error.status === 400 ? 'Le smasher existe déjà.' : error.message}
-                    </div>
+                    </Text>
                 )}
-
-                {successMessage && (
-                    <div className="bg-green-500 text-white p-2 mt-4 rounded justify-center text-center max-w-xs mx-auto overflow-hidden break-words">
-                        {successMessage}
-                    </div>
-                )}
-            </form>
-            <div className="p-5 w-full md:w-1/2 flex items-center justify-center">
+            </View>
+            <View style={styles.cardContainer}>
                 <SmashCard
                     name={name || '[Nom]'}
                     age={age || '[Âge]'}
                     gender={sex === 'Autre' ? customSex : sex || '[Genre]'}
                     url_img={urlImg || 'https://static.wikia.nocookie.net/disney/images/8/89/Profile_-_Kim_Possible.png/revision/latest?cb=20190312090023'}
                 />
-            </div>
-        </div>
+            </View>
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        backgroundColor: '#000',
+    },
+    loadingOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1,
+    },
+    formContainer: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 20,
+        borderRadius: 10,
+        width: '100%',
+        maxWidth: 400,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#FFF',
+        marginBottom: 20,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        backgroundColor: '#333',
+        color: '#FFF',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10,
+    },
+    success: {
+        color: 'green',
+        marginBottom: 10,
+    },
+    cardContainer: {
+        marginTop: 20,
+        width: '100%',
+        alignItems: 'center',
+    },
+});
 
 export default CreateSmashForm;

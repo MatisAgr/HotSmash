@@ -1,17 +1,32 @@
 import React from 'react';
+import { View, TextInput, StyleSheet } from 'react-native';
 
 const SearchBar = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="mb-4">
-      <input
-        type="text"
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
         placeholder="Rechercher un utilisateur..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="p-2 border border-gray-300 rounded-lg w-full"
+        onChangeText={setSearchTerm}
+        placeholderTextColor="#888"
       />
-    </div>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
+  input: {
+    padding: 8,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    width: '100%',
+    backgroundColor: '#FFF',
+  },
+});
 
 export default SearchBar;
