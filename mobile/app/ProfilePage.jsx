@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Button, ScrollView, TouchableOpacity, Picker } from 'react-native';
-import SmashCard from '../components/SmashCard';
-import ConfirmationModal from '../components/ConfirmationModal';
+import { View, Text, Button, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import SmashCard from '@/components/SmashCard';
+import ConfirmationModal from '@/components/ConfirmationModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { profileUser, resetStats } from '../redux/slices/authSlice';
-import { TailwindProvider } from 'tailwindcss-react-native';
+import { profileUser, resetStats } from '@/redux/slices/authSlice';
+import RNPickerSelect from 'react-native-picker-select';
 
 const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,90 +63,230 @@ const ProfilePage = () => {
   };
 
   return (
-    <TailwindProvider>
-      <ScrollView className="container mx-auto p-4">
-        <Text className="text-4xl font-bold mb-4 text-white">Profile Page</Text>
-        {user && (
-          <>
-            <View className="bg-white shadow-md rounded p-4 mb-6 text-center">
-              <Text className="text-3xl font-bold">Username: {user.username}</Text>
-              <Text className="text-2xl"><Text className="font-bold">Email:</Text> {user.email}</Text>
-            </View>
-            <View className="bg-white shadow-md rounded p-4 mb-6 text-center">
-              <Text className="text-4xl font-bold mb-4 text-purple-600">Points de détraquage mental</Text>
-              <Text className="text-6xl font-bold text-purple-800">{user.point}</Text>
-            </View>
-          </>
-        )}
-        <View className="bg-white shadow-md rounded p-4 mb-6">
-          <Text className="text-2xl font-bold mb-4">Statistiques de Smashing</Text>
-          <View className="mb-4">
-            <Text className="mr-2">Intervalle de temps:</Text>
-            <Picker
-              selectedValue={timeInterval}
-              onValueChange={(itemValue) => setTimeInterval(itemValue)}
-              className="p-2 border rounded"
-            >
-              <Picker.Item label="Date" value="date" />
-              <Picker.Item label="Heure" value="hour" />
-              <Picker.Item label="15 minutes" value="15min" />
-            </Picker>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Profile Page</Text>
+      {user && (
+        <>
+          <View style={styles.userInfo}>
+            <Text style={styles.username}>Username: {user.username}</Text>
+            <Text style={styles.email}><Text style={styles.bold}>Email:</Text> {user.email}</Text>
           </View>
-          <View ref={chartRef} style={{ width: '100%', height: 400 }}></View>
+          <View style={styles.pointsContainer}>
+            <Text style={styles.pointsTitle}>Points de détraquage mental</Text>
+            <Text style={styles.points}>{user.point}</Text>
+          </View>
+        </>
+      )}
+      <View style={styles.statsContainer}>
+        <Text style={styles.statsTitle}>Statistiques de Smashing</Text>
+        <View style={styles.pickerContainer}>
+          <Text style={styles.pickerLabel}>Intervalle de temps:</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setTimeInterval(value)}
+            items={[
+              { label: 'Date', value: 'date' },
+              { label: 'Heure', value: 'hour' },
+              { label: '15 minutes', value: '15min' },
+            ]}
+            style={pickerSelectStyles}
+            value={timeInterval}
+          />
         </View>
-        <View className="bg-white shadow-md rounded p-4">
-          <Text className="text-2xl font-bold mb-4">Liste des Smashes</Text>
-          <View className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {currentSmashes.map((smash) => (
-              <SmashCard
-                key={smash.matchId}
-                name={smash.name}
-                age={smash.age}
-                gender={smash.gender}
-                url_img={smash.url_img}
-                points={smash.points}
-                type={smash.type}
-                date={smash.date} // Pass the date to SmashCard
-                size='small'
-              />
-            ))}
-          </View>
-          <View className="flex justify-between mt-4">
-            <TouchableOpacity
-              onPress={handlePreviousPage}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              disabled={currentPage === 1}
-            >
-              Previous
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleNextPage}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              disabled={indexOfLastSmash >= matches.length}
-            >
-              Next
-            </TouchableOpacity>
-          </View>
+        <View ref={chartRef} style={styles.chart}></View>
+      </View>
+      <View style={styles.smashesContainer}>
+        <Text style={styles.smashesTitle}>Liste des Smashes</Text>
+        <View style={styles.smashesGrid}>
+          {currentSmashes.map((smash) => (
+            <SmashCard
+              key={smash.matchId}
+              name={smash.name}
+              age={smash.age}
+              gender={smash.gender}
+              url_img={smash.url_img}
+              points={smash.points}
+              type={smash.type}
+              date={smash.date} // Pass the date to SmashCard
+              size='small'
+            />
+          ))}
         </View>
-        <View className="flex justify-center mt-6">
+        <View style={styles.pagination}>
           <TouchableOpacity
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-lg focus:outline-none focus:shadow-outline text-3xl"
-            onPress={() => setIsModalOpen(true)}
+            onPress={handlePreviousPage}
+            style={[styles.paginationButton, currentPage === 1 && styles.disabledButton]}
+            disabled={currentPage === 1}
           >
-            Reset les stats
+            <Text style={styles.paginationButtonText}>Previous</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleNextPage}
+            style={[styles.paginationButton, indexOfLastSmash >= matches.length && styles.disabledButton]}
+            disabled={indexOfLastSmash >= matches.length}
+          >
+            <Text style={styles.paginationButtonText}>Next</Text>
           </TouchableOpacity>
         </View>
-        <ConfirmationModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onConfirm={() => {
-            handleReset();
-            setIsModalOpen(false);
-          }}
-        />
-      </ScrollView>
-    </TailwindProvider>
+      </View>
+      <View style={styles.resetContainer}>
+        <TouchableOpacity
+          style={styles.resetButton}
+          onPress={() => setIsModalOpen(true)}
+        >
+          <Text style={styles.resetButtonText}>Reset les stats</Text>
+        </TouchableOpacity>
+      </View>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={() => {
+          handleReset();
+          setIsModalOpen(false);
+        }}
+      />
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    backgroundColor: '#1F2937',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 16,
+  },
+  userInfo: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  username: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  email: {
+    fontSize: 20,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  pointsContainer: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  pointsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#8B5CF6',
+    marginBottom: 8,
+  },
+  points: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#8B5CF6',
+  },
+  statsContainer: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  statsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  pickerContainer: {
+    marginBottom: 16,
+  },
+  pickerLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  chart: {
+    width: '100%',
+    height: 400,
+  },
+  smashesContainer: {
+    backgroundColor: '#FFF',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  smashesTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  smashesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  paginationButton: {
+    backgroundColor: '#3B82F6',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  paginationButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  resetContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  resetButton: {
+    backgroundColor: '#EF4444',
+    padding: 16,
+    borderRadius: 8,
+  },
+  resetButtonText: {
+    color: '#FFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
 
 export default ProfilePage;
