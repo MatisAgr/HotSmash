@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRandomMatches } from '../redux/slices/matchSlice';
@@ -21,7 +21,7 @@ export default function SmashList() {
 
     useEffect(() => {
         setCurrentIndex(0); // Réinitialiser l'index après récupération
-    }, []);
+    }, [users]);
 
     const handleAction = (action) => {
         if (users.length > 0 && user) {
@@ -43,6 +43,20 @@ export default function SmashList() {
             }, 500);
         }
     };
+
+    // Affichage d'un indicateur de chargement si les données sont en cours de chargement
+    if (isLoading) {
+        return (
+            <LinearGradient 
+                colors={['#3B82F6', '#EC4899', '#EF4444']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.container}
+            >
+                <ActivityIndicator size="large" color="#FFF" />
+            </LinearGradient>
+        );
+    }
 
     return (
         <LinearGradient 
@@ -70,11 +84,14 @@ export default function SmashList() {
             </View>
 
             {/* Message quand aucune carte n'est disponible */}
-            {users.length === 0 && (
+            {(!isLoading && users.length === 0) && (
                 <View style={styles.noCardContainer}>
                     <Text style={styles.noCardEmoji}>🤯</Text>
                     <Text style={styles.noCardTitle}>Aucune carte disponible</Text>
                     <Text style={styles.noCardMessage}>Vous avez fini {NAME_APP}</Text>
+                    <br />
+                    <Text style={styles.noCardMessage}>Si c'est un bug, il faut changer de page et revenir</Text>
+                    <Text style={styles.noCardMessage}>C'est en TODO</Text>
                 </View>
             )}
         </LinearGradient>
@@ -86,7 +103,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',   
-      },
+    },
     buttonContainer: {
         flexDirection: 'row',
         width: '100%',
@@ -116,7 +133,6 @@ const styles = StyleSheet.create({
     },
     noCardContainer: {
         position: 'absolute',
-        bottom: 40,
         alignSelf: 'center',
         backgroundColor: '#A855F7',
         paddingVertical: 16,

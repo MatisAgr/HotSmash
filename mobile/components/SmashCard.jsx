@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 10,
+    zIndex: 10,
     backgroundColor: '#3B82F6',
     paddingVertical: 5,
     paddingHorizontal: 10,
