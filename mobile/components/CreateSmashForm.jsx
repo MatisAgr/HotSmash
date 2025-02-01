@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { createMatch } from '../../redux/slices/matchSlice';
-import SmashCard from '../Card/SmashCard';
+import { createMatch } from '@/redux/slices/matchSlice';
+import SmashCard from './SmashCard';
 
 const CreateSmashForm = () => {
     const dispatch = useDispatch();

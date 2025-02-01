@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { REACT_APP_API_URL } from '@env';
 
 const MyAxios = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000/api',
+    baseURL: REACT_APP_API_URL || 'http://localhost:3000/api',
     timeout: 1000,
     headers: { 'X-Custom-Header': 'foobar' }
 });
