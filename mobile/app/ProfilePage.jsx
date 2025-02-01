@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Button, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Button, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import SmashCard from '@/components/SmashCard';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,6 +10,7 @@ const ProfilePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [timeInterval, setTimeInterval] = useState('date'); // 'date', 'hour', '15min'
+  const [isLoading, setIsLoading] = useState(true);
   const smashesPerPage = 4;
   const chartRef = useRef(null);
 
@@ -17,7 +18,7 @@ const ProfilePage = () => {
   const { user, pointsByDay, matches = [] } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(profileUser());
+    dispatch(profileUser()).then(() => setIsLoading(false));
   }, [dispatch]);
 
   const totalPoints = matches.reduce((total, match) => total + (match.type === 1 ? match.points : -match.points), 0);
@@ -61,6 +62,14 @@ const ProfilePage = () => {
     dispatch(resetStats());
     setCurrentPage(1);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FFF" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -153,6 +162,12 @@ const ProfilePage = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: '#1F2937',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#1F2937',
   },
   title: {
