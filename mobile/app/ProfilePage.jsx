@@ -92,7 +92,9 @@ const ProfilePage = () => {
             value={timeInterval}
           />
         </View>
-        <View ref={chartRef} style={styles.chart}></View>
+        <View ref={chartRef} style={styles.chart}>
+          <Text>Pas réussi à mettre un graphique en react-native</Text>
+        </View>
       </View>
       <View style={styles.smashesContainer}>
         <Text style={styles.smashesTitle}>Liste des Smashes</Text>
@@ -266,27 +268,40 @@ const styles = StyleSheet.create({
   },
 });
 
-const pickerSelectStyles = StyleSheet.create({
+const pickerSelectStyles = {
   inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
+    height: 40,
     borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#333',
+    color: '#FFF',
+    paddingRight: 30,
   },
   inputAndroid: {
-    fontSize: 16,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
     paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
+    borderRadius: 5,
+    backgroundColor: '#333',
+    color: '#FFF',
+    paddingRight: 30,
   },
-});
+  inputWeb: {
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      backgroundColor: '#333',
+      color: '#FFF',
+      paddingRight: 30,
+    },
+};
 
 export default ProfilePage;
