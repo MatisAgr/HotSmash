@@ -1,27 +1,27 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import { NAME_APP } from '../constants/NameApp';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 
 export default function Navbar() {
-  const navigation = useNavigation();
+  const router = useRouter();
   const dispatch = useDispatch();
   
   const isAuthenticated = useSelector((state) => !!state.auth.token);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigation.navigate('Login');
+    router.push('/login');
   };
 
   return (
     <View style={styles.navbar}>
       <View style={styles.container}>
         <View style={styles.brand}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.brandLink}>
+          <TouchableOpacity onPress={() => router.push('/')} style={styles.brandLink}>
             <Text style={styles.brandText}>{NAME_APP}</Text>
           </TouchableOpacity>
         </View>
@@ -29,21 +29,21 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               <TouchableOpacity
-                onPress={() => navigation.navigate('CreateSmash')}
+                onPress={() => router.push('/CreateSmashPage')}
                 style={styles.link}
               >
                 <FaUser style={styles.icon} />
                 <Text style={styles.linkText}>Créer Smasher</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ConnectedUsers')}
+                onPress={() => router.push('/ConnectedUsersPage')}
                 style={styles.link}
               >
                 <FaUser style={styles.icon} />
                 <Text style={styles.linkText}>Utilisateurs</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Profile')}
+                onPress={() => router.push('/ProfilePage')}
                 style={styles.link}
               >
                 <Image
@@ -63,14 +63,14 @@ export default function Navbar() {
           ) : (
             <>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => router.push('/LoginPage')}
                 style={styles.link}
               >
                 <FaSignInAlt style={styles.icon} />
                 <Text style={styles.linkText}>Login</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Register')}
+                onPress={() => router.push('/RegisterPage')}
                 style={styles.link}
               >
                 <FaUserPlus style={styles.icon} />
