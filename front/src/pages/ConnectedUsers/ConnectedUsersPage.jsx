@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedUserCard from '../../components/Card/ConnectedUserCard';
 import SearchBar from '../../components/SearchBar/SearchBar';
+import WebSocketClient from '../../components/Messages/WebSocketClient';
 
 export default function ConnectedUsers() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,8 +24,10 @@ export default function ConnectedUsers() {
             points={user.points}
             smashesToDo={user.smashesToDo}
           />
+    
         ))}
       </div>
+
     </div>
   );
 }
