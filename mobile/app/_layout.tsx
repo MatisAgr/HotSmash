@@ -2,14 +2,14 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar, View, StyleSheet } from 'react-native';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { TailwindProvider } from 'tailwindcss-react-native';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
+import Navbar from '@/components/Navbar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,17 +33,24 @@ export default function RootLayout() {
     <Provider store={store}>
       <TailwindProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="Home" options={{ headerShown: false }} />
-            <Stack.Screen name="Register" />
-            <Stack.Screen name="Login" />
-            <Stack.Screen name="CreateSmash" />
-            <Stack.Screen name="ConnectedUsers" />
-            <Stack.Screen name="Profile" />
-            <Stack.Screen name="not-found" />
-          </Stack>
+          <View style={styles.container}>
+            <Navbar />
+            <View style={styles.content}>
+              <Stack />
+            </View>
+          </View>
+          <StatusBar style="auto" />
         </ThemeProvider>
       </TailwindProvider>
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+});

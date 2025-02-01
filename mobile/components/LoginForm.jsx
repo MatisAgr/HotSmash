@@ -20,7 +20,7 @@ export default function LoginForm() {
             dispatch(initiateWebSocket());
             setAlert({ type: 'success', message: 'Connexion réussie ! Redirection vers le profil...' });
             setTimeout(() => {
-                router.push("/profile");
+                router.push("/ProfilePage");
             }, 2000);
         }
     }, [token, router, dispatch]);
