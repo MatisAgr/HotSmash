@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import { createMatch } from '@/redux/slices/matchSlice';
 import SmashCard from './SmashCard';
+import RNPickerSelect from 'react-native-picker-select';
 
 const CreateSmashForm = () => {
     const dispatch = useDispatch();
@@ -99,73 +100,114 @@ const CreateSmashForm = () => {
 
     return (
         <View style={styles.container}>
-            {isLoading && (
-                <View style={styles.loadingOverlay}>
-                    <ActivityIndicator size="large" color="#FFF" />
-                </View>
-            )}
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>Créer un Smash</Text>
-                {formError ? <Text style={styles.error}>{formError}</Text> : null}
-                {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nom"
-                    value={name}
-                    onChangeText={setName}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Âge"
-                    value={age}
-                    onChangeText={setAge}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Genre"
-                    value={sex}
-                    onChangeText={setSex}
-                />
-                {sex === 'Autre' && (
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Objet, Animal, Autre..."
-                        value={customSex}
-                        onChangeText={setCustomSex}
-                    />
-                )}
-                <TextInput
-                    style={styles.input}
-                    placeholder="Points de détraquage mental"
-                    value={points}
-                    onChangeText={handleChangePoints}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="URL de l'image"
-                    value={urlImg}
-                    onChangeText={setUrlImg}
-                />
-                <Button title="Créer un Smash" onPress={handleSubmit} disabled={isLoading} />
-                {error && (
-                    <Text style={styles.error}>
-                        {error.status === 400 ? 'Le smasher existe déjà.' : error.message}
-                    </Text>
-                )}
-            </View>
-            <View style={styles.cardContainer}>
-                <SmashCard
-                    name={name || '[Nom]'}
-                    age={age || '[Âge]'}
-                    gender={sex === 'Autre' ? customSex : sex || '[Genre]'}
-                    url_img={urlImg || 'https://static.wikia.nocookie.net/disney/images/8/89/Profile_-_Kim_Possible.png/revision/latest?cb=20190312090023'}
-                />
-            </View>
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#FFF" />
+          </View>
+        )}
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Créer un Smash</Text>
+          {formError ? <Text style={styles.error}>{formError}</Text> : null}
+          {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
+          <TextInput
+            style={styles.input}
+            placeholder="Nom"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Âge"
+            value={age}
+            onChangeText={setAge}
+            keyboardType="numeric"
+          />
+          <RNPickerSelect
+            onValueChange={(value) => setSex(value)}
+            items={[
+              { label: 'Homme', value: 'Homme' },
+              { label: 'Femme', value: 'Femme' },
+              { label: 'Autre', value: 'Autre' },
+            ]}
+            style={pickerSelectStyles}
+            value={sex}
+            placeholder={{ label: 'Choisissez votre genre', value: null }}
+          />
+          {sex === 'Autre' && (
+            <TextInput
+              style={styles.input}
+              placeholder="Précisez votre genre personnalisé"
+              value={customSex}
+              onChangeText={setCustomSex}
+            />
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Points de détraquage mental"
+            value={points}
+            onChangeText={handleChangePoints}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="URL de l'image"
+            value={urlImg}
+            onChangeText={setUrlImg}
+          />
+          <Button title="Créer un Smash" onPress={handleSubmit} disabled={isLoading} />
+          {error && (
+            <Text style={styles.error}>
+              {error.status === 400 ? 'Le smasher existe déjà.' : error.message}
+            </Text>
+          )}
         </View>
+        <View style={styles.cardContainer}>
+          <SmashCard
+            name={name || '[Nom]'}
+            age={age || '[Âge]'}
+            gender={sex === 'Autre' ? customSex : sex || '[Genre]'}
+            url_img={urlImg || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNNLEL-qmmLeFR1nxJuepFOgPYfnwHR56vcw&s'}
+          />
+        </View>
+      </View>
     );
 };
+
+const pickerSelectStyles = {
+    inputIOS: {
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      backgroundColor: '#333',
+      color: '#FFF',
+      paddingRight: 30,
+    },
+    inputAndroid: {
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      backgroundColor: '#333',
+      color: '#FFF',
+      paddingRight: 30,
+    },
+    inputWeb: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        backgroundColor: '#333',
+        color: '#FFF',
+        paddingRight: 30,
+      },
+  };
 
 const styles = StyleSheet.create({
     container: {

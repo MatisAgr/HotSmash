@@ -195,7 +195,7 @@ const CreateSmashForm = () => {
                     name={name || '[Nom]'}
                     age={age || '[Âge]'}
                     gender={sex === 'Autre' ? customSex : sex || '[Genre]'}
-                    url_img={urlImg || 'https://static.wikia.nocookie.net/disney/images/8/89/Profile_-_Kim_Possible.png/revision/latest?cb=20190312090023'}
+                    url_img={urlImg || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNNLEL-qmmLeFR1nxJuepFOgPYfnwHR56vcw&s'}
                 />
             </div>
         </div>
