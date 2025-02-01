@@ -4,9 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRandomMatches } from '../redux/slices/matchSlice';
 import { createLike } from '../redux/slices/smashSlice';
+import { profileUser } from '../redux/slices/authSlice';
 import SmashCard from '../components/SmashCard';
 import { NAME_APP } from '../constants/NameApp';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export default function SmashList() {
     const dispatch = useDispatch();
@@ -14,9 +15,16 @@ export default function SmashList() {
     const user = useSelector((state) => state.auth.user);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [cooldown, setCooldown] = useState(false);
-
     const translateX = useSharedValue(0);
 
+    // Charger le profil utilisateur s'il n'est pas déjà présent
+    useEffect(() => {
+        if (!user) {
+            dispatch(profileUser());
+        }
+    }, [dispatch, user]);
+
+    // Charger les matchs dès que l'utilisateur est présent
     useEffect(() => {
         if (user) {
             dispatch(getRandomMatches());
@@ -24,27 +32,25 @@ export default function SmashList() {
     }, [dispatch, user]);
 
     useEffect(() => {
-        setCurrentIndex(0); // Réinitialiser l'index après récupération
+        setCurrentIndex(0);
     }, [users]);
 
     const handleAction = (action) => {
-        if (cooldown) return; // Si en cooldown, ne rien faire
+        if (cooldown) return;
 
         if (users.length > 0 && user) {
             const matchId = users[currentIndex]._id;
             const likeData = {
                 userId: user.id,
                 matchId,
-                type: action === 'pass' ? 2 : 1, // 2 pour pass, 1 pour smash
+                type: action === 'pass' ? 2 : 1,
             };
             dispatch(createLike(likeData));
-            setCooldown(true); // Activer le cooldown
-            setTimeout(() => setCooldown(false), 1000); // Désactiver le cooldown après 1 seconde
+            setCooldown(true);
+            setTimeout(() => setCooldown(false), 1000);
 
-            // Animation de la carte
             translateX.value = withTiming(action === 'pass' ? -500 : 500, { duration: 500 }, () => {
                 translateX.value = 0;
-                // Passer à la carte suivante ou récupérer de nouveaux matchs
                 if (currentIndex >= users.length - 1) {
                     dispatch(getRandomMatches());
                     setCurrentIndex(0);
@@ -55,13 +61,10 @@ export default function SmashList() {
         }
     };
 
-    const animatedStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{ translateX: translateX.value }],
-        };
-    });
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateX: translateX.value }],
+    }));
 
-    // Affichage d'un indicateur de chargement si les données sont en cours de chargement
     if (isLoading) {
         return (
             <LinearGradient 
@@ -75,6 +78,22 @@ export default function SmashList() {
         );
     }
 
+    if (error) {
+        return (
+            <LinearGradient 
+                colors={['#3B82F6', '#EC4899', '#EF4444']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.container}
+            >
+                <Text style={styles.errorText}>Erreur de chargement des données</Text>
+                <TouchableOpacity style={styles.reloadButton} onPress={() => dispatch(getRandomMatches())}>
+                    <Text style={styles.reloadButtonText}>Recharger</Text>
+                </TouchableOpacity>
+            </LinearGradient>
+        );
+    }
+
     return (
         <LinearGradient 
             colors={['#3B82F6', '#EC4899', '#EF4444']}
@@ -83,17 +102,14 @@ export default function SmashList() {
             style={styles.container}
         >
             <View style={styles.buttonContainer}>
-                {/* Zone PASS à gauche */}
                 <TouchableOpacity style={[styles.halfButton, cooldown && styles.disabledButton]} onPress={() => handleAction('pass')} disabled={cooldown}>
                     <Text style={styles.buttonText}>PASS</Text>
                 </TouchableOpacity>
-                {/* Zone SMASH à droite */}
                 <TouchableOpacity style={[styles.halfButton, cooldown && styles.disabledButton]} onPress={() => handleAction('smash')} disabled={cooldown}>
                     <Text style={styles.buttonText}>SMASH</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Carte au centre */}
             <View style={styles.cardContainer}>
                 {users.length > 0 && currentIndex < users.length && (
                     <Animated.View style={[styles.animatedCard, animatedStyle]}>
@@ -102,7 +118,6 @@ export default function SmashList() {
                 )}
             </View>
 
-            {/* Message quand aucune carte n'est disponible */}
             {(!isLoading && users.length === 0) && (
                 <View style={styles.noCardContainer}>
                     <Text style={styles.noCardEmoji}>🤯</Text>
@@ -200,5 +215,12 @@ const styles = StyleSheet.create({
     },
     disabledButton: {
         opacity: 0.5,
+    },
+    errorText: {
+        color: '#FFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 16,
     },
 });
